@@ -20,6 +20,7 @@
 !cat
 !kitty-cam
 !xdg-terminals.list
+!zsh
 
 # generated files
 __pycache__/
