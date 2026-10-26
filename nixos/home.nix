@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  dots = "${config.home.homeDirectory}/box-dots";
+  dots = "${config.home.homeDirectory}/nix-dots";
   # Out-of-store links keep the files writable, so matugen can regenerate colors
   link = name: { source = config.lib.file.mkOutOfStoreSymlink "${dots}/${name}"; };
 in
