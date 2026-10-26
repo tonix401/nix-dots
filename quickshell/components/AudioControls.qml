@@ -80,18 +80,28 @@ ColumnLayout {
         property int latencyMs: 0
         property real level: 0
         property var samples: [] // [ms, peak], oldest first; changed in place
+        // Whether samples are waiting to be shown. The frame loop runs only while there is something to
+        // show or let fall: in silence it would redraw the drawer every frame (~16% of a core) for nothing.
+        property bool queued: false
 
         PwNodePeakMonitor {
             id: meter
             node: channel.node
             enabled: root.active
-            onPeakChanged: channel.samples.push([Date.now(), meter.peak])
+            onPeakChanged: {
+                // silence is only queued behind sound, so it can't start the frame loop on its own
+                if (meter.peak < 0.001 && channel.samples.length === 0)
+                    return;
+                channel.samples.push([Date.now(), meter.peak]);
+                channel.queued = true;
+            }
         }
 
         FrameAnimation {
-            running: root.active
+            running: root.active && (channel.queued || channel.level > 0)
             onRunningChanged: if (!running) {
                 channel.samples.length = 0;
+                channel.queued = false;
                 channel.level = 0;
             }
             onTriggered: {
@@ -99,7 +109,13 @@ ColumnLayout {
                 while (s.length > 1 && s[1][0] <= now)
                     s.shift();
                 const peak = s.length > 0 && s[0][0] <= now ? s[0][1] : 0;
-                channel.level = Math.max(peak, channel.level - frameTime * 1.6);
+                // the last sample, once shown, is done: the level falls from it until new ones come
+                if (s.length === 1 && s[0][0] <= now)
+                    s.shift();
+                if (s.length === 0)
+                    channel.queued = false;
+                const level = Math.max(peak, channel.level - frameTime * 1.6);
+                channel.level = level < 0.001 ? 0 : level;
             }
         }
 
