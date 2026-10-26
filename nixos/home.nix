@@ -25,7 +25,16 @@ in
     "starship.toml"
     "xdg-terminals.list" # kitty for Terminal=true apps, which uwsm opens through xdg-terminal-exec
     "zsh"
-  ] link;
+  ] link // {
+    # iwgtk's tray indicator (its package autostarts `iwgtk -i`) repeats the bar's network block and
+    # floods the quickshell log with tray-property warnings; right-clicking that block still opens iwgtk.
+    "autostart/iwgtk-indicator.desktop".text = ''
+      [Desktop Entry]
+      Type=Application
+      Name=iwgtk
+      Hidden=true
+    '';
+  };
 
   # zsh reads the rest of its config from ~/.config/zsh
   home.file.".zshenv".text = ''

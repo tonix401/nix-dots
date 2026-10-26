@@ -211,8 +211,11 @@ in
   # Monitor brightness over DDC/CI (ddcutil in quickshell)
   hardware.i2c.enable = true;
 
-  # Docker daemon; being in the docker group lets tom use it without sudo
+  # Docker daemon; being in the docker group lets tom use it without sudo. Started by its socket on
+  # the first `docker` call instead of at boot (~130 MB for dockerd + containerd otherwise), so
+  # containers with a restart policy only come back once docker is used.
   virtualisation.docker.enable = true;
+  virtualisation.docker.enableOnBoot = false;
 
   # Installs LocalSend and opens its port (53317) in the firewall
   programs.localsend.enable = true;
