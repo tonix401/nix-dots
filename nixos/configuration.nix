@@ -83,7 +83,7 @@ in
       # home-manager's module comes in from flake.nix
     ];
 
-  # Built from ~/box-dots/nixos/flake.nix: sudo nixos-rebuild switch --flake ~/box-dots/nixos
+  # Built from ~/nix-dots/nixos/flake.nix: sudo nixos-rebuild switch --flake ~/nix-dots/nixos
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # No channels: <nixpkgs> in NIX_PATH and the flake registry both point at the flake's pinned nixpkgs
   nix.channel.enable = false;

@@ -58,14 +58,14 @@ hyprpm reload
 ### NixOS (laptop)
 
 `nixos/` is the laptop's system config: `configuration.nix` (SDDM, Hyprland under uwsm, fonts,
-services), `home.nix` (home-manager: links these configs out of `~/box-dots`, user packages and the
+services), `home.nix` (home-manager: links these configs out of `~/nix-dots`, user packages and the
 session services: dcal, cliphist, hyprpolkitagent) and its `hardware-configuration.nix`, tied
 together by `flake.nix`; `flake.lock` pins nixpkgs and home-manager. New files must be `git add`ed
 before the flake sees them.
 
 ```
-sudo nixos-rebuild switch --flake ~/box-dots/nixos   # also: boot, test, build (no sudo)
-nix flake update --flake ~/box-dots/nixos            # update nixpkgs and home-manager, then rebuild
+sudo nixos-rebuild switch --flake ~/nix-dots/nixos   # also: boot, test, build (no sudo)
+nix flake update --flake ~/nix-dots/nixos            # update nixpkgs and home-manager, then rebuild
 ```
 
 The configs check for `/etc/NIXOS` where NixOS differs from Arch (hyprexpo, package aliases).
