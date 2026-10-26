@@ -17,7 +17,10 @@ Singleton {
 
     // Powers the wifi device (iwd, the same one scripts/network.sh reads) on or off.
     function wifiPowerCommand(on) {
-        return `iwctl device "$(basename "$(dirname /sys/class/net/*/wireless | head -n1)")" set-property Powered ${on ? "on" : "off"}`;
+        // The device iwd manages, not the first wireless netdev: a stale second netdev can sit on the
+        // dongle's radio (see scripts/network.sh). iwctl colors its output even when piped.
+        const device = "iwctl device list | sed 's/\\x1b\\[[0-9;]*m//g' | awk '$2 ~ /^([0-9a-f]{2}:){5}/ {print $1; exit}'";
+        return `iwctl device "$(${device})" set-property Powered ${on ? "on" : "off"}`;
     }
 
     // Rounds a width up to whole device pixels, so blocks laid side by side meet on a pixel edge
