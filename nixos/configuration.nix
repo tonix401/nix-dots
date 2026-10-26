@@ -80,8 +80,13 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      <home-manager/nixos>
+      # home-manager's module comes in from flake.nix
     ];
+
+  # Built from ~/box-dots/nixos/flake.nix: sudo nixos-rebuild switch --flake ~/box-dots/nixos
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # No channels: <nixpkgs> in NIX_PATH and the flake registry both point at the flake's pinned nixpkgs
+  nix.channel.enable = false;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -175,6 +180,13 @@ in
   environment.etc."hypr/plugins/hyprexpo.so".source = "${hyprexpo}/lib/libhyprexpo.so";
 
   programs.fish.enable = true;
+  # zsh next to fish, to try out (fish stays the login shell). box-dots/zsh runs compinit and the
+  # prompt itself, so /etc/zshrc doesn't.
+  programs.zsh = {
+    enable = true;
+    enableGlobalCompInit = false;
+    promptInit = "";
+  };
 
   i18n.inputMethod = {
     enable = true;

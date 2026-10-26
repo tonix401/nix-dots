@@ -24,7 +24,24 @@ in
     "quickshell"
     "starship.toml"
     "xdg-terminals.list" # kitty for Terminal=true apps, which uwsm opens through xdg-terminal-exec
+    "zsh"
   ] link;
+
+  # zsh reads the rest of its config from ~/.config/zsh
+  home.file.".zshenv".text = ''
+    export ZDOTDIR="$HOME/.config/zsh"
+    source "$ZDOTDIR/.zshenv"
+  '';
+
+  # The zsh plugins box-dots/zsh/.zshrc loads, at ~/.local/share/zsh/plugins/<name>/<name>.zsh (Arch
+  # has them at /usr/share/zsh/plugins)
+  xdg.dataFile = lib.mapAttrs' (name: dir: lib.nameValuePair "zsh/plugins/${name}" { source = dir; }) {
+    zsh-autosuggestions = "${pkgs.zsh-autosuggestions}/share/zsh/plugins/zsh-autosuggestions";
+    zsh-syntax-highlighting = "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting";
+    zsh-history-substring-search = "${pkgs.zsh-history-substring-search}/share/zsh/plugins/zsh-history-substring-search";
+    zsh-abbr = "${pkgs.zsh-abbr}/share/zsh/zsh-abbr";
+    fzf-tab = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
+  };
 
   # Launcher entries for the quickshell menus (quickshell/menus); the launcher itself and the share
   # menu (opened by the portal) are left out.
@@ -50,6 +67,8 @@ in
       email = "tom.weise.2004@gmail.com";
     };
   };
+
+  programs.firefox.enable = true;
 
   # Session services, started with graphical-session.target (which uwsm brings up with Hyprland)
   services.cliphist.enable = true; # clipboard history for the quickshell clipboard menu

@@ -51,16 +51,21 @@ hyprpm reload
   - `Notifs.qml`, `NotificationPopups.qml`: the notification daemon and its toasts (they expand on
     hover; right click on the bell toggles do not disturb)
 - `matugen/`: templates for every generated color file
+- `zsh/`: zsh set up to feel like the fish config (autosuggestions, highlighting in fish's colors,
+  history search, the kitty cat's hooks), next to fish rather than instead of it: run `zsh` to try it
 - `hypr/scripts/`: screenshot script and the Python helpers the menus call
 
 ### NixOS (laptop)
 
 `nixos/` is the laptop's system config: `configuration.nix` (SDDM, Hyprland under uwsm, fonts,
 services), `home.nix` (home-manager: links these configs out of `~/box-dots`, user packages and the
-session services: dcal, cliphist, hyprpolkitagent) and its `hardware-configuration.nix`. Apply it with
+session services: dcal, cliphist, hyprpolkitagent) and its `hardware-configuration.nix`, tied
+together by `flake.nix`; `flake.lock` pins nixpkgs and home-manager. New files must be `git add`ed
+before the flake sees them.
 
 ```
-nixos/apply.sh            # build as the user, copy to /etc/nixos, switch (also: boot, test, build)
+sudo nixos-rebuild switch --flake ~/box-dots/nixos   # also: boot, test, build (no sudo)
+nix flake update --flake ~/box-dots/nixos            # update nixpkgs and home-manager, then rebuild
 ```
 
 The configs check for `/etc/NIXOS` where NixOS differs from Arch (hyprexpo, package aliases).
