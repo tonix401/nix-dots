@@ -77,13 +77,9 @@ let
   };
 in
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      # home-manager's module comes in from flake.nix
-    ];
-
-  # Built from ~/nix-dots/nixos/flake.nix: sudo nixos-rebuild switch --flake ~/nix-dots/nixos
+  # Shared by every machine; the per-machine part (hardware scan, hostname, stateVersion) is in
+  # hosts/<hostname>/, and home-manager's module comes in from flake.nix.
+  # Built with: sudo nixos-rebuild switch --flake ~/nix-dots/nixos
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # No channels: <nixpkgs> in NIX_PATH and the flake registry both point at the flake's pinned nixpkgs
   nix.channel.enable = false;
@@ -91,8 +87,6 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-
-  networking.hostName = "nixbox"; # Define your hostname.
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -235,13 +229,4 @@ in
     nerd-fonts.jetbrains-mono
     adwaita-fonts # Adwaita Sans / Mono: the ui font in gtk and quickshell
   ];
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It's perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.11"; # Did you read the comment?
-
 }
