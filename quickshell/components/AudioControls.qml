@@ -84,28 +84,51 @@ ColumnLayout {
         // show or let fall: in silence it would redraw the drawer every frame (~16% of a core) for nothing.
         property bool queued: false
 
+        // Peaks below this count as silence (about -34 dBFS): a mic's room noise peaks at ~0.004-0.013 and
+        // would otherwise keep the meter, and the drawer's redraws, going forever.
+        readonly property real floor: 0.02
+
+        // Measuring keeps the device running (a stream woken ~47 times a second), so only while it can
+        // show anything: an output while some stream plays into it, an input while it isn't muted.
+        PwNodeLinkTracker {
+            id: links
+            node: channel.output && root.active ? channel.node : null
+        }
+        readonly property bool fed: !channel.output || links.linkGroups.some(g => g.target === channel.node && g.source?.isStream)
+
         PwNodePeakMonitor {
             id: meter
             node: channel.node
-            enabled: root.active
+            enabled: root.active && channel.fed && !(channel.node?.audio?.muted ?? false)
             onPeakChanged: {
-                // silence is only queued behind sound, so it can't start the frame loop on its own
-                if (meter.peak < 0.001 && channel.samples.length === 0)
+                // silence is only queued behind sound, so it can't start the meter loop on its own
+                if (meter.peak < channel.floor && channel.samples.length === 0)
                     return;
                 channel.samples.push([Date.now(), meter.peak]);
                 channel.queued = true;
             }
         }
 
-        FrameAnimation {
+        // 30 updates a second rather than one per frame (a high refresh rate doubles the redraws for a
+        // meter that looks the same), with the fall worked out from the wall clock.
+        Timer {
+            property real last: 0
+
+            interval: 33
+            repeat: true
             running: root.active && (channel.queued || channel.level > 0)
-            onRunningChanged: if (!running) {
-                channel.samples.length = 0;
-                channel.queued = false;
-                channel.level = 0;
+            onRunningChanged: {
+                last = Date.now();
+                if (!running) {
+                    channel.samples.length = 0;
+                    channel.queued = false;
+                    channel.level = 0;
+                }
             }
             onTriggered: {
-                const now = Date.now() - channel.latencyMs, s = channel.samples;
+                const wall = Date.now(), dt = (wall - last) / 1000;
+                last = wall;
+                const now = wall - channel.latencyMs, s = channel.samples;
                 while (s.length > 1 && s[1][0] <= now)
                     s.shift();
                 const peak = s.length > 0 && s[0][0] <= now ? s[0][1] : 0;
@@ -114,8 +137,12 @@ ColumnLayout {
                     s.shift();
                 if (s.length === 0)
                     channel.queued = false;
-                const level = Math.max(peak, channel.level - frameTime * 1.6);
-                channel.level = level < 0.001 ? 0 : level;
+                let level = Math.max(peak, channel.level - dt * 1.6);
+                if (level < channel.floor)
+                    level = 0;
+                // under ~1 px of the track is no visible change, so it's not worth a redraw
+                if (level === 0 || Math.abs(level - channel.level) >= 0.004)
+                    channel.level = level;
             }
         }
 
