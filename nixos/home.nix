@@ -8,7 +8,7 @@ in
 {
   home.username = "tom";
   home.homeDirectory = "/home/tom";
-  home.stateVersion = "25.11";
+  # home.stateVersion is per machine, in hosts/<hostname>/default.nix
 
   xdg.configFile = lib.genAttrs [
     "btop"

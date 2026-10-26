@@ -55,18 +55,29 @@ hyprpm reload
   history search, the kitty cat's hooks), next to fish rather than instead of it: run `zsh` to try it
 - `hypr/scripts/`: screenshot script and the Python helpers the menus call
 
-### NixOS (laptop)
+### NixOS
 
-`nixos/` is the laptop's system config: `configuration.nix` (SDDM, Hyprland under uwsm, fonts,
-services), `home.nix` (home-manager: links these configs out of `~/nix-dots`, user packages and the
-session services: dcal, cliphist, hyprpolkitagent) and its `hardware-configuration.nix`, tied
-together by `flake.nix`; `flake.lock` pins nixpkgs and home-manager. New files must be `git add`ed
-before the flake sees them.
+`nixos/` is the system config for my NixOS machines, tied together by `flake.nix` (`flake.lock`
+pins nixpkgs and home-manager):
+
+- `common.nix`: what every machine gets (SDDM, Hyprland under uwsm, fonts, services)
+- `home.nix`: home-manager, also shared: links these configs out of `~/nix-dots` (so the repo must
+  be cloned there), user packages and the session services (dcal, cliphist, hyprpolkitagent)
+- `hosts/<hostname>/`: one folder per machine with its `hardware-configuration.nix`, hostname and
+  stateVersions. `nixos-rebuild --flake` picks the folder named after the machine's hostname.
+
+New files must be `git add`ed before the flake sees them.
 
 ```
 sudo nixos-rebuild switch --flake ~/nix-dots/nixos   # also: boot, test, build (no sudo)
 nix flake update --flake ~/nix-dots/nixos            # update nixpkgs and home-manager, then rebuild
 ```
+
+Adding a machine: in the installer, run `nixos-generate-config --root /mnt` and clone this repo
+to `/mnt/home/tom/nix-dots`. Create `hosts/<name>/` with that `hardware-configuration.nix` and a
+`default.nix` like `hosts/nixbox/default.nix` (its own hostname, and the installer's release as
+both stateVersions), add `<name>` to the list in `flake.nix`, `git add` it, then
+`nixos-install --flake /mnt/home/tom/nix-dots/nixos#<name>`.
 
 The configs check for `/etc/NIXOS` where NixOS differs from Arch (hyprexpo, package aliases).
 Kitty Cam is not set up there. On small screens Quickshell shrinks the bar, menus and widgets on
