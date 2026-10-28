@@ -15,12 +15,13 @@ in
     "cat" # the kitty cat's rig, read by quickshell (components/Cat.qml, CatTester.qml)
     "fastfetch"
     "fcitx5"
-    "fish"
     "gtk-3.0"
     "gtk-4.0"
     "hypr"
     "kitty"
     "matugen"
+    "nano/qml.nanorc"
+    "nano/tsx.nanorc"
     "quickshell"
     "starship.toml"
     "xdg-terminals.list" # kitty for Terminal=true apps, which uwsm opens through xdg-terminal-exec
@@ -34,6 +35,23 @@ in
       Name=iwgtk
       Hidden=true
     '';
+
+    # nano/nanorc includes syntax files from /usr/share (Arch); here they're in the store, so this copy
+    # has the paths swapped (edits to it need a rebuild). nixpkgs' nanorc is from 2020 and has no jsx,
+    # so the definitions come from nano-syntax-highlighting, the project Arch packages.
+    "nano/nanorc".text =
+      let
+        syntax = pkgs.fetchFromGitHub {
+          owner = "galenguyer";
+          repo = "nano-syntax-highlighting";
+          rev = "ce0e7100dc9af181c258c5eb244b9d39e84e9936";
+          hash = "sha256-fJ4fleEXTz0MtVB9iqBbjFylhxh/K/pQ/YEPkAlx7GA=";
+        };
+      in
+      builtins.replaceStrings
+        [ "/usr/share/nano/" "/usr/share/nano-syntax-highlighting/" ]
+        [ "${pkgs.nano}/share/nano/" "${syntax}/" ]
+        (builtins.readFile ../nano/nanorc);
   };
 
   # zsh reads the rest of its config from ~/.config/zsh

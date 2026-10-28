@@ -8,7 +8,7 @@ current wallpaper with matugen.
 hyprland \
 quickshell \
 kitty \
-fish \
+zsh zsh-autosuggestions zsh-syntax-highlighting zsh-history-substring-search zsh-abbr (AUR) \
 starship \
 zoxide \
 matugen \
@@ -51,8 +51,7 @@ hyprpm reload
   - `Notifs.qml`, `NotificationPopups.qml`: the notification daemon and its toasts (they expand on
     hover; right click on the bell toggles do not disturb)
 - `matugen/`: templates for every generated color file
-- `zsh/`: zsh set up to feel like the fish config (autosuggestions, highlighting in fish's colors,
-  history search, the kitty cat's hooks), next to fish rather than instead of it: run `zsh` to try it
+- `zsh/`: the shell config (autosuggestions, highlighting, history search, the kitty cat's hooks)
 - `hypr/scripts/`: screenshot script and the Python helpers the menus call
 
 ### NixOS
@@ -87,7 +86,7 @@ its own.
 
 Wallpapers in `~/Pictures/Wallpapers` are resized and thumbnailed into `~/.cache/box-dots`
 and shown in the wallpaper picker (SUPER + P). Picking one sets it with awww and runs
-`matugen`, which regenerates the colors for Hyprland, Quickshell, kitty, fish, starship,
+`matugen`, which regenerates the colors for Hyprland, Quickshell, kitty, zsh, starship,
 btop, hyprlock, fastfetch and the fcitx5 theme. Quickshell picks up the new
 palette by itself.
 

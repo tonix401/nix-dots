@@ -126,7 +126,7 @@ in
     extraGroups = [ "networkmanager" "wheel" "i2c" "docker" ];
     # Lets the sddm user reach the wallpaper in ~/.cache (traverse only, no listing)
     homeMode = "711";
-    shell = pkgs.fish;
+    shell = pkgs.zsh;
   };
 
   # Dotfiles and user packages live in home.nix
@@ -173,9 +173,7 @@ in
   # Loaded from ~/.config/hypr/hyprland.lua; replaces hyprpm on NixOS
   environment.etc."hypr/plugins/hyprexpo.so".source = "${hyprexpo}/lib/libhyprexpo.so";
 
-  programs.fish.enable = true;
-  # zsh next to fish, to try out (fish stays the login shell). box-dots/zsh runs compinit and the
-  # prompt itself, so /etc/zshrc doesn't.
+  # The login shell. box-dots/zsh runs compinit and the prompt itself, so /etc/zshrc doesn't.
   programs.zsh = {
     enable = true;
     enableGlobalCompInit = false;
