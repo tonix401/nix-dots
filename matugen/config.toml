@@ -35,11 +35,6 @@ post_hook = "pkill -USR1 -x '\\.?kitty(-wrapped)?' &>/dev/null &"
 input_path = "~/.config/matugen/templates/colors-hyprlock.conf"
 output_path = "~/.config/hypr/colors-hyprlock.conf"
 
-[templates.colors-fish]
-input_path = "~/.config/matugen/templates/colors.fish"
-output_path = "~/.config/fish/colors.fish"
-post_hook = "fish -c 'set -U theme_changed (random)' &>/dev/null &"
-
 [templates.colors-zsh]
 input_path = "~/.config/matugen/templates/colors.zsh"
 output_path = "~/.config/zsh/colors.zsh"
@@ -52,11 +47,19 @@ post_hook = "~/.config/matugen/scripts/svg-spin.py ~/.cache/box-dots/svgs/nix.sv
 [templates.penguin-svg]
 input_path = "~/.config/matugen/templates/penguin.svg"
 output_path = "~/.cache/box-dots/svgs/penguin.svg"
-post_hook = "~/.config/matugen/scripts/svg-to-png.py ~/.cache/box-dots/svgs/penguin.svg ~/.config/fish/images/penguin.png &>/dev/null &"
+post_hook = "~/.config/matugen/scripts/svg-to-png.py ~/.cache/box-dots/svgs/penguin.svg ~/.config/zsh/images/penguin.png &>/dev/null &"
 
 [templates.colors-fastfetch]
 input_path = "~/.config/matugen/templates/colors-fastfetch.jsonc"
 output_path = "~/.config/fastfetch/config.jsonc"
+
+[templates.hermes-wallpaper-theme]
+input_path = "~/.config/matugen/templates/hermes-wallpaper-theme.json"
+output_path = "~/.cache/hermes-wallpaper-theme/palette.json"
+
+[templates.hermes-skin-yaml]
+input_path = "~/.config/matugen/templates/hermes-skin.yaml"
+output_path = "~/.hermes/skins/matugen.yaml"
 
 [templates.fcitx5-theme]
 input_path = "~/.config/matugen/templates/fcitx5-theme.conf"
