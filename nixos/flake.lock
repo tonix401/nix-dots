@@ -1,5 +1,26 @@
 {
   "nodes": {
+    "desktop-goose": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793215042,
+        "narHash": "sha256-oeHBhVXx/Y1IT1qqwKJGwG3ap+p02UTjtev+wTz+w2M=",
+        "owner": "tonix401",
+        "repo": "desktop-goose",
+        "rev": "94a8042f33c862d4039a429fb26ed273393e7843",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tonix401",
+        "repo": "desktop-goose",
+        "rev": "94a8042f33c862d4039a429fb26ed273393e7843",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -38,6 +59,7 @@
     },
     "root": {
       "inputs": {
+        "desktop-goose": "desktop-goose",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs"
       }
