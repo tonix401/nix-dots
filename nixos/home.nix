@@ -145,7 +145,8 @@ in
     };
     Service = {
       Type = "oneshot";
-      ExecStart = ''${pkgs.curl}/bin/curl -sf -X POST http://127.0.0.1:8765/api -d '{"action":"sync","version":6}' '';
+      # Without the JSON content type the server answers 422 (curl -d sends it as a form)
+      ExecStart = ''${pkgs.curl}/bin/curl -sf -H "Content-Type: application/json" -X POST http://127.0.0.1:8765/api -d '{"action":"sync","version":6}' '';
     };
   };
   systemd.user.timers.anki-connect-sync = {
