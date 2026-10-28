@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, goose, ... }:
 
 let
   dots = "${config.home.homeDirectory}/nix-dots";
@@ -168,6 +168,7 @@ in
     playerctl
     pulseaudio # pactl: cat/voice.py watches playback with it (the sound server is pipewire-pulse)
     brightnessctl
+    goose # goosectl, the sidebar's goose toggle (flake.nix)
 
     # terminal
     kitty
