@@ -119,6 +119,45 @@ in
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
+  # Anki without the app: anki-connect-server serves the collection on AnkiConnect's API and syncs
+  # it with AnkiWeb (pkgs/anki-connect-server.nix). Its settings and the AnkiWeb login are in
+  # ~/.config/anki-connect-server/env (chmod 600, ANKICONNECT_COLLECTION_PATH, _PORT, _BIND,
+  # _ANKIWEB_USER, _ANKIWEB_PASS), kept out of the repo and the store; it doesn't start until that exists.
+  systemd.user.services.anki-connect-server = {
+    Unit = {
+      Description = "Headless AnkiConnect-compatible API server (no Qt/GUI)";
+      ConditionPathExists = "%h/.config/anki-connect-server/env";
+    };
+    Service = {
+      Type = "simple";
+      EnvironmentFile = "%h/.config/anki-connect-server/env";
+      ExecStart = "${pkgs.callPackage ./pkgs/anki-connect-server.nix { }}/bin/anki-connect-server api";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+  systemd.user.services.anki-connect-sync = {
+    Unit = {
+      Description = "Trigger an anki-connect-server sync to AnkiWeb";
+      After = [ "anki-connect-server.service" ];
+      Requires = [ "anki-connect-server.service" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = ''${pkgs.curl}/bin/curl -sf -X POST http://127.0.0.1:8765/api -d '{"action":"sync","version":6}' '';
+    };
+  };
+  systemd.user.timers.anki-connect-sync = {
+    Unit.Description = "Periodically trigger an anki-connect-server sync";
+    Timer = {
+      OnBootSec = "5min";
+      OnUnitActiveSec = "30min";
+      Persistent = true;
+    };
+    Install.WantedBy = [ "timers.target" ];
+  };
+
   # Dark mode for everything that asks the portal (libadwaita, Qt 6.5+, Electron, browsers): the gtk
   # portal answers org.freedesktop.appearance color-scheme from this key.
   dconf.settings."org/gnome/desktop/interface" = {
