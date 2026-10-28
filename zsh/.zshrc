@@ -131,6 +131,66 @@ __toggle_sudo() {
 }
 zle -N __toggle_sudo
 __bind __toggle_sudo '^[s'
+# Ctrl-V pastes the clipboard, Ctrl-X copies the command line, like fish (zsh's Ctrl-V is
+# quoted-insert). Ctrl-C copying a selection is kitty's copy_or_interrupt, the same in any shell.
+__clipboard_paste() {
+    local clip
+    clip=$(wl-paste --no-newline 2>/dev/null) || return
+    LBUFFER+=$clip
+}
+__clipboard_copy() {
+    local text=$BUFFER
+    if (( REGION_ACTIVE )); then # the selection (Shift + arrows), else the whole line
+        text=${BUFFER[$(( (MARK < CURSOR ? MARK : CURSOR) + 1 )),$(( MARK > CURSOR ? MARK : CURSOR ))]}
+        REGION_ACTIVE=0
+    fi
+    [[ -n $text ]] && print -rn -- $text | wl-copy
+}
+
+# Selecting with Shift (+ Ctrl for words) and the arrows / Home / End, like fish: each select-*
+# widget starts a selection where the cursor is (or extends the current one) and moves; the
+# arrows without Shift drop it. Typing or deleting replaces it.
+for __w in backward-char forward-char backward-word forward-word beginning-of-line end-of-line; do
+    eval "select-$__w() { (( REGION_ACTIVE )) || { MARK=\$CURSOR; REGION_ACTIVE=1 }; zle $__w }
+        deselect-$__w() { REGION_ACTIVE=0; zle $__w }"
+    zle -N select-$__w
+    zle -N deselect-$__w
+done
+unset __w
+zle_highlight=(region:bg=#44475a paste:none) # the selection, visible next to the highlighting
+__bind select-backward-char   '^[[1;2D'
+__bind select-forward-char    '^[[1;2C'
+__bind select-backward-word   '^[[1;6D'
+__bind select-forward-word    '^[[1;6C'
+__bind select-beginning-of-line '^[[1;2H'
+__bind select-end-of-line     '^[[1;2F'
+__bind deselect-backward-char '^[[D' '^[OD'
+__bind deselect-forward-char  '^[[C' '^[OC'
+__bind deselect-backward-word '^[[1;5D' '^[[1;3D'
+__bind deselect-forward-word  '^[[1;5C' '^[[1;3C'
+__bind deselect-beginning-of-line '^[[H' '^[OH' '^[[1~'
+__bind deselect-end-of-line   '^[[F' '^[OF' '^[[4~'
+# The arrows now run these instead of forward-char & co: tell zsh-autosuggestions they accept the
+# suggestion (→, End) or a word of it (Ctrl-→, Alt-→)
+ZSH_AUTOSUGGEST_ACCEPT_WIDGETS+=(deselect-forward-char deselect-end-of-line)
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(deselect-forward-word)
+# Typing, Backspace or Delete over a selection replaces it
+# (named per widget: $WIDGET is the outermost one, e.g. zsh-abbr's on space, which calls self-insert)
+__kill_selection() {
+    (( REGION_ACTIVE )) || return 1
+    zle kill-region
+    REGION_ACTIVE=0
+}
+__replace_self_insert() { __kill_selection; zle .self-insert }
+__replace_backward_delete_char() { __kill_selection || zle .backward-delete-char }
+__replace_delete_char() { __kill_selection || zle .delete-char }
+zle -N self-insert __replace_self_insert
+zle -N backward-delete-char __replace_backward_delete_char
+zle -N delete-char __replace_delete_char
+zle -N __clipboard_paste
+zle -N __clipboard_copy
+__bind __clipboard_paste '^V'
+__bind __clipboard_copy '^X'
 
 # Ctrl-R: search history in fzf (fish's Ctrl-R pager); fzf's Ctrl-T and Alt-C are left off
 FZF_CTRL_T_COMMAND= FZF_ALT_C_COMMAND= source <(fzf --zsh)
