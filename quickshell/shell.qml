@@ -290,6 +290,17 @@ ShellRoot {
         }
     }
 
+    // Password requests from scripts/askpass.sh (SUDO_ASKPASS); see Askpass.qml. Answers "ok" so the
+    // script knows the menu took it.
+    IpcHandler {
+        target: "askpass"
+
+        function ask(fifo: string, prompt: string): string {
+            Askpass.request(fifo, prompt);
+            return "ok";
+        }
+    }
+
     LazyLoader {
         active: Pet.testerOpen
         CatTester {}
@@ -340,5 +351,9 @@ ShellRoot {
     LazyLoader {
         active: Menus.active === "display"
         DisplayMenu {}
+    }
+    LazyLoader {
+        active: Menus.active === "askpass"
+        AskpassMenu {}
     }
 }
