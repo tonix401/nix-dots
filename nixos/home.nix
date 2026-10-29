@@ -95,6 +95,10 @@ in
     };
   };
 
+  # GitHub CLI; also git's credential helper for github.com, so git push uses the `gh auth login` token
+  # (the login itself lives in ~/.config/gh/hosts.yml, which home-manager leaves alone)
+  programs.gh.enable = true;
+
   programs.firefox.enable = true;
 
   # Session services, started with graphical-session.target (which uwsm brings up with Hyprland)
