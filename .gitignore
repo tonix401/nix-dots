@@ -36,3 +36,4 @@ __pycache__/
 # local / temporary files
 gtk-3.0/bookmarks
 fcitx5/conf/*.conf_*
+result
