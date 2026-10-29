@@ -99,7 +99,11 @@ in
   # (the login itself lives in ~/.config/gh/hosts.yml, which home-manager leaves alone)
   programs.gh.enable = true;
 
-  programs.firefox.enable = true;
+  programs.firefox = {
+    enable = true;
+    # The new XDG location, where Firefox already keeps its profile (~/.mozilla only has native messaging hosts)
+    configPath = "${config.xdg.configHome}/mozilla/firefox";
+  };
 
   # Session services, started with graphical-session.target (which uwsm brings up with Hyprland)
   services.cliphist.enable = true; # clipboard history for the quickshell clipboard menu
@@ -115,7 +119,7 @@ in
       PartOf = [ "graphical-session.target" ];
     };
     Service = {
-      ExecStart = "${pkgs.dankcalendar}/bin/dcal run --session --hidden";
+      ExecStart = "${pkgs.dux-calendar}/bin/dcal run --session --hidden";
       Restart = "on-failure";
       RestartSec = 2;
       Slice = "app.slice";
@@ -206,7 +210,7 @@ in
     jq
     ddcutil
     nemo
-    dankcalendar
+    dux-calendar
     pavucontrol
     iwgtk
     playerctl
