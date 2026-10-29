@@ -244,7 +244,14 @@ in
       "khncfooichmfjbepaaaebmommgaepoid" # Unhook - Remove YouTube Recommended & Shorts
     ];
     # Proton Pass is the password manager: switch off the built-in one
-    extraOpts.PasswordManagerEnabled = false;
+    extraOpts = {
+      PasswordManagerEnabled = false;
+      DefaultSearchProviderEnabled = true;
+      DefaultSearchProviderName = "DuckDuckGo";
+      DefaultSearchProviderKeyword = "ddg";
+      DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
+      DefaultSearchProviderSuggestURL = "https://duckduckgo.com/ac/?q={searchTerms}&type=list";
+    };
   };
 
   environment.systemPackages = with pkgs; [
