@@ -118,6 +118,7 @@ in
     # Proton Pass is the password manager: switch off the built-in one
     policies.PasswordManagerEnabled = false;
     policies.OfferToSaveLogins = false;
+    policies.SearchEngines.Default = "DuckDuckGo";
     # Force-installed extensions (enterprise policy), fetched from addons.mozilla.org by slug
     policies.ExtensionSettings = let
       forced = slug: {
