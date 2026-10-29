@@ -22,13 +22,13 @@ in
   hardware.nvidia = {
     open = true;
     modesetting.enable = true;
-    powerManagement.enable = false; # desktop: no suspend-to-RAM tuning needed
+    powerManagement.enable = true; # preserves VRAM across hibernate
     nvidiaSettings = false;
   };
 
   # Hibernate resume: swapfile on /swap (@swap btrfs subvolume, hardware-configuration.nix)
   boot.resumeDevice = "/dev/disk/by-label/root";
-  boot.kernelParams = [ "resume_offset=3207788" ];
+  boot.kernelParams = [ "resume_offset=7677184" ];
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;
