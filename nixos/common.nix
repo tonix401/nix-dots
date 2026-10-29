@@ -17,8 +17,8 @@ let
   sddmTheme = pkgs.sddm-astronaut.override {
     embeddedTheme = "post-apocalyptic_hacker";
     themeConfig = {
-      ScreenWidth = "1920";
-      ScreenHeight = "1080";
+      ScreenWidth = "3440";
+      ScreenHeight = "1440";
       Font = "JetBrainsMono Nerd Font";
       FontSize = "15";
       KeyboardSize = "0.4";
@@ -123,7 +123,7 @@ in
   users.users.tom = {
     isNormalUser = true;
     description = "tom";
-    extraGroups = [ "networkmanager" "wheel" "i2c" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "i2c" ];
     # Lets the sddm user reach the wallpaper in ~/.cache (traverse only, no listing)
     homeMode = "711";
     shell = pkgs.zsh;
@@ -209,12 +209,6 @@ in
   # Monitor brightness over DDC/CI (ddcutil in quickshell)
   hardware.i2c.enable = true;
 
-  # Docker daemon; being in the docker group lets tom use it without sudo. Started by its socket on
-  # the first `docker` call instead of at boot (~130 MB for dockerd + containerd otherwise), so
-  # containers with a restart policy only come back once docker is used.
-  virtualisation.docker.enable = true;
-  virtualisation.docker.enableOnBoot = false;
-
   # Installs LocalSend and opens its port (53317) in the firewall
   programs.localsend.enable = true;
 
@@ -223,7 +217,6 @@ in
     git
     chromium
     claude-code
-    docker-compose
   ];
 
   fonts.packages = with pkgs; [
