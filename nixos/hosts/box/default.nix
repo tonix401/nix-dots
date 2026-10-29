@@ -26,6 +26,10 @@ in
     nvidiaSettings = false;
   };
 
+  # The newest stable kernel instead of the LTS default; the nvidia module is built against it, so
+  # if a kernel release breaks the driver, boot the previous generation and drop this line.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Hibernate resume: swapfile on /swap (@swap btrfs subvolume, hardware-configuration.nix)
   boot.resumeDevice = "/dev/disk/by-label/root";
   boot.kernelParams = [ "resume_offset=7677184" ];
