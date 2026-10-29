@@ -15,3 +15,6 @@ hl.env("GTK_THEME", "Adwaita:dark")
 -- Input method settings for fcitx5
 hl.env("QT_IM_MODULE", "fcitx")
 hl.env("XMODIFIERS", "@im=fcitx")
+
+-- `sudo -A` (and anything else that honours SUDO_ASKPASS) asks through a Quickshell prompt
+hl.env("SUDO_ASKPASS", os.getenv("HOME") .. "/.config/quickshell/scripts/askpass.sh")
