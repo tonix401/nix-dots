@@ -194,6 +194,9 @@ in
     adw-gtk3
     adwaita-icon-theme # the icon theme quickshell and gtk use
 
+    # runtime for the knowledge vault's Claude hooks and qmd MCP server (.claude/scripts/*.ts)
+    nodejs
+
     # menus, clipboard, screenshots
     grimblast
     cliphist
