@@ -13,9 +13,15 @@
       url = "github:tonix401/desktop-goose/94a8042f33c862d4039a429fb26ed273393e7843";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Hermes Agent (Nous Research): not in nixpkgs, so from its own flake
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, desktop-goose, ... }:
+  outputs = { nixpkgs, home-manager, desktop-goose, hermes-agent, ... }:
     let
       # A machine: the shared config plus hosts/<name>. nixos-rebuild --flake picks the one named
       # after the hostname.
@@ -26,6 +32,7 @@
           home-manager.nixosModules.home-manager
           ({ pkgs, ... }: {
             home-manager.extraSpecialArgs.goose = desktop-goose.packages.${pkgs.stdenv.hostPlatform.system}.default;
+            environment.systemPackages = [ hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default ];
           })
         ];
       };
