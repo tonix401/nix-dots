@@ -233,6 +233,18 @@ in
   # Installs LocalSend and opens its port (53317) in the firewall
   programs.localsend.enable = true;
 
+  # Chromium: force-installed extensions (ExtensionInstallForcelist). No full uBlock Origin: it is MV2 and gone
+  # from the Web Store, so uBlock Origin Lite is the Chromium one.
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      "ddkjiahejlhfcafbddmgiahcphecmpfh" # uBlock Origin Lite
+      "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
+      "likgccmbimhjbgkjambclfkhldnlhbnn" # Yomitan
+      "khncfooichmfjbepaaaebmommgaepoid" # Unhook - Remove YouTube Recommended & Shorts
+    ];
+  };
+
   environment.systemPackages = with pkgs; [
     sddmTheme
     git
