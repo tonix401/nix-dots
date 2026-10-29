@@ -91,6 +91,17 @@ in
   # No channels: <nixpkgs> in NIX_PATH and the flake registry both point at the flake's pinned nixpkgs
   nix.channel.enable = false;
 
+  # At most 10 system generations: every switch deletes all but the newest 10, the boot menu lists
+  # only those, and the weekly garbage collection frees what the deleted ones used.
+  system.activationScripts.keepTenGenerations = ''
+    ${config.nix.package}/bin/nix-env --profile /nix/var/nix/profiles/system --delete-generations +10
+  '';
+  boot.loader.systemd-boot.configurationLimit = 10;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+  };
+
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
