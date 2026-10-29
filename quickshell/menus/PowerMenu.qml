@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
 import Quickshell.Widgets
 import qs
 import qs.components
@@ -16,6 +17,9 @@ Menu {
     readonly property real screenWidth: screen?.width ?? 3440
     readonly property real screenHeight: screen?.height ?? 1440
     readonly property int inset: 6 // around the list
+    // Whether logind can hibernate here: it needs a swap big enough and a resume device, which only
+    // the desktop has (nixos/hosts/box); elsewhere the option is left out.
+    property bool canHibernate: false
     // Screen pixels to picture pixels, chosen so the options fill the picture's height; the
     // picture sits inside the box's 2px border.
     readonly property real scale: (items.length * rowHeight + (items.length - 1) * listSpacing + 2 * inset) / screenHeight
@@ -33,6 +37,10 @@ Menu {
             text: Theme.g(0xf0425) + "   Shutdown",
             cmd: "systemctl poweroff"
         },
+        ...(canHibernate ? [{
+                    text: Theme.g(0xf0717) + "   Hibernate",
+                    cmd: "systemctl hibernate"
+                }] : []),
         {
             text: Theme.g(0xf0709) + "   Reboot",
             cmd: "systemctl reboot"
@@ -81,4 +89,12 @@ Menu {
     }
 
     rowContent: MenuText {}
+
+    Process {
+        running: true
+        command: ["busctl", "call", "org.freedesktop.login1", "/org/freedesktop/login1", "org.freedesktop.login1.Manager", "CanHibernate"]
+        stdout: StdioCollector {
+            onStreamFinished: menu.canHibernate = text.includes('"yes"')
+        }
+    }
 }
