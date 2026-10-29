@@ -21,6 +21,15 @@ in
   hardware.graphics.enable = true;
   hardware.nvidia = {
     open = true;
+    # Early KMS (below) puts the driver's firmware into the initrd. Ship only the Turing GSP
+    # blob: the Ampere one is 73 MB the 2060 never loads, and the firmware reading the initrd
+    # before the kernel starts is a black screen of that length.
+    package = let p = config.boot.kernelPackages.nvidiaPackages.stable; in p // {
+      firmware = pkgs.runCommand "nvidia-firmware-turing-${p.version}" { } ''
+        mkdir -p $out/lib/firmware/nvidia/${p.version}
+        cp ${p.firmware}/lib/firmware/nvidia/${p.version}/gsp_tu10x.bin $out/lib/firmware/nvidia/${p.version}/
+      '';
+    };
     modesetting.enable = true;
     powerManagement.enable = true; # preserves VRAM across hibernate
     nvidiaSettings = false;
