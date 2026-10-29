@@ -38,6 +38,6 @@
       };
     in
     {
-      nixosConfigurations = nixpkgs.lib.genAttrs [ "nixbox" "box" ] mkHost;
+      nixosConfigurations = nixpkgs.lib.genAttrs [ "nixtop" "nixbox" ] mkHost;
     };
 }

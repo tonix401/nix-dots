@@ -67,7 +67,7 @@ pins nixpkgs and home-manager):
 
 New files must be `git add`ed before the flake sees them.
 
-In zsh, quote flake references that contain `#` or `=` (e.g. `nix build "./nixos#nixosConfigurations.box.config.system.build.toplevel" --dry-run`);
+In zsh, quote flake references that contain `#` or `=` (e.g. `nix build "./nixos#nixosConfigurations.nixbox.config.system.build.toplevel" --dry-run`);
 unquoted, zsh can mangle them and the command fails with errors unrelated to the config.
 
 ```
@@ -77,13 +77,13 @@ nix flake update --flake ~/nix-dots/nixos            # update nixpkgs and home-m
 
 Adding a machine: in the installer, run `nixos-generate-config --root /mnt` and clone this repo
 to `/mnt/home/tom/nix-dots`. Create `hosts/<name>/` with that `hardware-configuration.nix` and a
-`default.nix` like `hosts/nixbox/default.nix` (its own hostname, and the installer's release as
+`default.nix` like `hosts/nixtop/default.nix` (its own hostname, and the installer's release as
 both stateVersions), add `<name>` to the list in `flake.nix`, `git add` it, then
 `nixos-install --flake /mnt/home/tom/nix-dots/nixos#<name>`.
 
 The configs check for `/etc/NIXOS` where NixOS differs from Arch (hyprexpo, package aliases).
-Kitty Cam is only linked on the PC host (`hosts/box`; the laptop has no webcam), and
-`hosts/box/README.md` lists what differs between the two machines. On small screens Quickshell shrinks the bar, menus and widgets on
+Kitty Cam is only linked on the PC host (`hosts/nixbox`; the laptop has no webcam), and
+`hosts/nixbox/README.md` lists what differs between the two machines. On small screens Quickshell shrinks the bar, menus and widgets on
 its own.
 
 ### Wallpapers and theming
