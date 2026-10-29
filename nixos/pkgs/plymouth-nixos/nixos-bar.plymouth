@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=NixOS bar
+Description=NixOS snowflake with a progress bar
+ModuleName=script
+
+[script]
+ImageDir=@@OUT@@
+ScriptFile=@@OUT@@/nixos-bar.script
