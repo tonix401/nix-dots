@@ -21,6 +21,8 @@
 !kitty-cam
 !xdg-terminals.list
 !zsh
+!claude
+!hermes
 
 # generated files
 __pycache__/
