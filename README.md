@@ -46,7 +46,7 @@ hyprpm reload
   - `SidePanel.qml`: the drawer on the right (push the pointer against the right screen edge, or
     click the bell, media block or clock to pin it): calendar, media, connections, sound and the
     notification history; `qs ipc call sidebar toggle`
-  - `menus/`: launcher, clipboard, emoji, nerd font, keybinds, power and wallpaper menus
+  - `menus/`: launcher, clipboard, symbol (emoji, nerd font, unicode), keybinds, power and wallpaper menus
   - `WeekCalendar.qml`, `TodoList.qml`, `HabitTracker.qml`: desktop widgets backed by dcal
   - `Notifs.qml`, `NotificationPopups.qml`: the notification daemon and its toasts (they expand on
     hover; right click on the bell toggles do not disturb)
