@@ -13,9 +13,7 @@ in
 
   networking.hostName = "box";
 
-  # The NixOS release this machine was first installed with. Set it to what the installer wrote
-  # (grep stateVersion /etc/nixos/configuration.nix after nixos-generate-config); 26.05 is a guess.
-  system.stateVersion = "26.05";
+  system.stateVersion = "25.11";
 
   # NVIDIA RTX 2060 (Turing): the open kernel module is supported and what the Arch box runs
   # (nvidia-open). Modesetting is what Wayland needs.
@@ -62,7 +60,7 @@ in
   environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 =
     lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" gstPlugins;
   home-manager.users.tom = { config, ... }: {
-    home.stateVersion = "26.05";
+    home.stateVersion = "25.11";
     home.sessionVariables.DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/podman/podman.sock";
     xdg.configFile."kitty-cam".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-dots/kitty-cam";
