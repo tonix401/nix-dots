@@ -32,8 +32,9 @@ in
 
   # Boot splash: Plymouth with the NixOS snowflake and a progress bar (pkgs/plymouth-nixos-theme.nix).
   # `quiet`/`splash` and the zero log levels keep kernel and initrd text from painting over it.
-  # No early KMS for nvidia on purpose: the splash starts on the EFI framebuffer and the nvidia
-  # modules would grow the initrd; add them to boot.initrd.kernelModules if the handoff flickers.
+  # Early KMS: without the nvidia modules in the initrd, Plymouth starts on the EFI framebuffer
+  # (simpledrm) and nvidia-drm replaces it ~4 s later, which blanked the splash (2026-10-29).
+  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_drm" "nvidia_uvm" ];
   boot.plymouth = {
     enable = true;
     theme = "nixos-bar";
