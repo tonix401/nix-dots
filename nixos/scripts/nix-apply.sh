@@ -3,6 +3,8 @@
 #   nix-apply boot      switch on the next boot instead (also test, build, dry-build)
 #   nix-apply update    update the flake inputs first, then switch
 flake="$HOME/nix-dots/nixos"
+# sudo -A asks through the Quickshell prompt, so this works without a terminal too
+export SUDO_ASKPASS="${SUDO_ASKPASS:-$HOME/.config/quickshell/scripts/askpass.sh}"
 
 action="${1:-switch}"
 if [[ "$action" == update ]]; then
@@ -22,5 +24,5 @@ if [[ "$action" == build ]]; then
 elif [[ "$action" == dry-build ]]; then
   nixos-rebuild dry-build --flake "$flake#$(hostname)"
 else
-  sudo nixos-rebuild "$action" --flake "$flake#$(hostname)"
+  sudo -A nixos-rebuild "$action" --flake "$flake#$(hostname)"
 fi
