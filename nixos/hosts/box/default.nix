@@ -42,6 +42,21 @@ in
   # btrfs on the system disk (hardware-configuration.nix): monthly scrub, as the Arch box
   services.btrfs.autoScrub.enable = true;
 
+  # Weekly read-only snapshot of /home (@home) in /.snapshots (@snapshots), keeping the newest 10.
+  # Same disk, so it guards against deleted or overwritten files, not a failing drive. Persistent:
+  # a week missed while the PC was off is caught up at the next boot.
+  systemd.services.home-snapshot = {
+    description = "Snapshot /home and keep the newest 10";
+    serviceConfig.Type = "oneshot";
+    path = [ pkgs.btrfs-progs ];
+    script = ''
+      btrfs subvolume snapshot -r /home "/.snapshots/home-$(date +%Y-%m-%d_%H-%M)"
+      ls -1d /.snapshots/home-* | head -n -10 | xargs -r btrfs subvolume delete
+    '';
+    startAt = "weekly";
+  };
+  systemd.timers.home-snapshot.timerConfig.Persistent = true;
+
   # Rootless Podman with a docker CLI shim instead of the Docker daemon (as on Arch); the user's
   # podman.socket (below, DOCKER_HOST) answers docker-API clients.
   virtualisation.podman = {
