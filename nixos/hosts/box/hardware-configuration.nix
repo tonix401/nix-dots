@@ -21,13 +21,19 @@ in
   fileSystems."/var/log" = btrfs "@log";
   fileSystems."/.snapshots" = btrfs "@snapshots";
 
+  fileSystems."/swap" = {
+    device = "/dev/disk/by-label/root";
+    fsType = "btrfs";
+    options = [ "subvol=@swap" "noatime" "discard=async" ];
+  };
+
   fileSystems."/boot" = {
     device = "/dev/disk/by-partlabel/EFI";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };
 
-  swapDevices = [ ];
+  swapDevices = [{ device = "/swap/swapfile"; }];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

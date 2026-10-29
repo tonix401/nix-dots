@@ -26,14 +26,12 @@ in
     nvidiaSettings = false;
   };
 
-  # RAM instead of a swap partition: zram, 4 GB of 16 as on Arch
-  zramSwap = {
-    enable = true;
-    algorithm = "zstd";
-    memoryMax = 4 * 1024 * 1024 * 1024;
-  };
+  # Hibernate resume: swapfile on /swap (@swap btrfs subvolume, hardware-configuration.nix)
+  boot.resumeDevice = "/dev/disk/by-label/root";
+  boot.kernelParams = [ "resume_offset=3207788" ];
+
   boot.kernel.sysctl = {
-    "vm.swappiness" = 60;
+    "vm.swappiness" = 10;
     "vm.page-cluster" = 3;
   };
 
