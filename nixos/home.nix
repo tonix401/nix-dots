@@ -54,11 +54,23 @@ in
         (builtins.readFile ../nano/nanorc);
   };
 
-  # zsh reads the rest of its config from ~/.config/zsh
-  home.file.".zshenv".text = ''
-    export ZDOTDIR="$HOME/.config/zsh"
-    source "$ZDOTDIR/.zshenv"
-  '';
+  # Claude Code and Hermes: only the declarative files are linked (writable, so `/config` and
+  # `hermes config` still work). Credentials, history, sessions and caches stay unversioned, and
+  # ~/.hermes/memories is a link into the knowledge vault, which has its own git sync.
+  home.file = {
+    # zsh reads the rest of its config from ~/.config/zsh
+    ".zshenv".text = ''
+      export ZDOTDIR="$HOME/.config/zsh"
+      source "$ZDOTDIR/.zshenv"
+    '';
+
+    ".claude/CLAUDE.md" = link "claude/CLAUDE.md";
+    ".claude/settings.json" = link "claude/settings.json";
+    ".hermes/config.yaml" = link "hermes/config.yaml";
+    ".hermes/SOUL.md" = link "hermes/SOUL.md";
+    ".hermes/memories".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/knowledge/hermes/memories";
+  };
 
   # The zsh plugins box-dots/zsh/.zshrc loads, at ~/.local/share/zsh/plugins/<name>/<name>.zsh (Arch
   # has them at /usr/share/zsh/plugins)
@@ -103,6 +115,18 @@ in
     enable = true;
     # The new XDG location, where Firefox already keeps its profile (~/.mozilla only has native messaging hosts)
     configPath = "${config.xdg.configHome}/mozilla/firefox";
+    # Force-installed extensions (enterprise policy), fetched from addons.mozilla.org by slug
+    policies.ExtensionSettings = let
+      forced = slug: {
+        installation_mode = "force_installed";
+        install_url = "https://addons.mozilla.org/firefox/downloads/latest/${slug}/latest.xpi";
+      };
+    in {
+      "uBlock0@raymondhill.net" = forced "ublock-origin";
+      "78272b6fa58f4a1abaac99321d503a20@proton.me" = forced "proton-pass";
+      "{6b733b82-9261-47ee-a595-2dda294a4d08}" = forced "yomitan";
+      "myallychou@gmail.com" = forced "youtube-recommended-videos"; # Unhook
+    };
   };
 
   # Session services, started with graphical-session.target (which uwsm brings up with Hyprland)
