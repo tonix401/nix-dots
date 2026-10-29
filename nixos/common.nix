@@ -243,6 +243,8 @@ in
       "likgccmbimhjbgkjambclfkhldnlhbnn" # Yomitan
       "khncfooichmfjbepaaaebmommgaepoid" # Unhook - Remove YouTube Recommended & Shorts
     ];
+    # Proton Pass is the password manager: switch off the built-in one
+    extraOpts.PasswordManagerEnabled = false;
   };
 
   environment.systemPackages = with pkgs; [

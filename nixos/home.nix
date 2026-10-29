@@ -115,6 +115,9 @@ in
     enable = true;
     # The new XDG location, where Firefox already keeps its profile (~/.mozilla only has native messaging hosts)
     configPath = "${config.xdg.configHome}/mozilla/firefox";
+    # Proton Pass is the password manager: switch off the built-in one
+    policies.PasswordManagerEnabled = false;
+    policies.OfferToSaveLogins = false;
     # Force-installed extensions (enterprise policy), fetched from addons.mozilla.org by slug
     policies.ExtensionSettings = let
       forced = slug: {
