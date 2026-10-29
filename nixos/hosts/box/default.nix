@@ -30,9 +30,20 @@ in
   # if a kernel release breaks the driver, boot the previous generation and drop this line.
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  # Boot splash: Plymouth with the NixOS snowflake and a progress bar (pkgs/plymouth-nixos-theme.nix).
+  # `quiet`/`splash` and the zero log levels keep kernel and initrd text from painting over it.
+  # No early KMS for nvidia on purpose: the splash starts on the EFI framebuffer and the nvidia
+  # modules would grow the initrd; add them to boot.initrd.kernelModules if the handoff flickers.
+  boot.plymouth = {
+    enable = true;
+    theme = "nixos-bar";
+    themePackages = [ (pkgs.callPackage ../../pkgs/plymouth-nixos-theme.nix { }) ];
+  };
+  boot.consoleLogLevel = 0;
+
   # Hibernate resume: swapfile on /swap (@swap btrfs subvolume, hardware-configuration.nix)
   boot.resumeDevice = "/dev/disk/by-label/root";
-  boot.kernelParams = [ "resume_offset=7677184" ];
+  boot.kernelParams = [ "resume_offset=7677184" "quiet" "splash" ];
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;

@@ -180,6 +180,9 @@ in
   # and XDG autostart (fcitx5) come up with it, and apps launched with `uwsm app --` get their own scope.
   services.displayManager.defaultSession = "hyprland-uwsm";
 
+  # hyprlock needs its own PAM service to check the password (no service file otherwise)
+  security.pam.services.hyprlock = { };
+
   programs.hyprland = {
     enable = true;
     withUWSM = true;

@@ -1,0 +1,60 @@
+// NixOS snowflake + progress bar. Bar width follows the boot progress Plymouth reports, with a
+// time-based floor so it keeps moving when the reported progress stalls (systemd's initrd is lumpy).
+
+Window.SetBackgroundTopColor(0.06, 0.06, 0.08);
+Window.SetBackgroundBottomColor(0.06, 0.06, 0.08);
+
+screen_w = Window.GetWidth();
+screen_h = Window.GetHeight();
+
+// Logo: 22% of the screen height, centred a bit above the middle
+logo_image = Image("logo.png");
+logo_h = screen_h * 0.22;
+logo_scale = logo_h / logo_image.GetHeight();
+logo_w = logo_image.GetWidth() * logo_scale;
+logo_image = logo_image.Scale(logo_w, logo_h);
+logo_sprite = Sprite(logo_image);
+logo_sprite.SetPosition(Window.GetX() + (screen_w - logo_w) / 2, Window.GetY() + screen_h * 0.38 - logo_h / 2, 10);
+
+// Bar: a faint track with the fill on top
+bar_w = screen_w * 0.16;
+bar_h = screen_h * 0.005;
+if (bar_h < 3) bar_h = 3;
+bar_x = Window.GetX() + (screen_w - bar_w) / 2;
+bar_y = Window.GetY() + screen_h * 0.38 + logo_h / 2 + screen_h * 0.05;
+
+track_sprite = Sprite(Image("track.png").Scale(bar_w, bar_h));
+track_sprite.SetPosition(bar_x, bar_y, 10);
+track_sprite.SetOpacity(0.15);
+
+fill_image = Image("fill.png");
+fill_sprite = Sprite();
+fill_sprite.SetPosition(bar_x, bar_y, 11);
+
+target = 0;
+shown = 0;
+
+fun boot_progress(time, progress) {
+  // time floor: approaches 0.9 as the boot drags on, never reaches the end by itself
+  floor = 0.9 * time / (time + 8);
+  target = progress;
+  if (floor > target) target = floor;
+}
+Plymouth.SetBootProgressFunction(boot_progress);
+
+fun refresh() {
+  // ease towards the target, never backwards
+  if (target > shown) shown = shown + (target - shown) * 0.1;
+  w = bar_w * shown;
+  if (w < 1) w = 1;
+  fill_sprite.SetImage(fill_image.Scale(w, bar_h));
+}
+Plymouth.SetRefreshFunction(refresh);
+
+// Finish the bar at the end of boot
+fun quit() {
+  target = 1;
+  shown = 1;
+  refresh();
+}
+Plymouth.SetQuitFunction(quit);
