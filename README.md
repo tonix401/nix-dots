@@ -67,6 +67,9 @@ pins nixpkgs and home-manager):
 
 New files must be `git add`ed before the flake sees them.
 
+In zsh, quote flake references that contain `#` or `=` (e.g. `nix build "./nixos#nixosConfigurations.box.config.system.build.toplevel" --dry-run`);
+unquoted, zsh can mangle them and the command fails with errors unrelated to the config.
+
 ```
 sudo nixos-rebuild switch --flake ~/nix-dots/nixos   # also: boot, test, build (no sudo)
 nix flake update --flake ~/nix-dots/nixos            # update nixpkgs and home-manager, then rebuild
@@ -79,7 +82,8 @@ both stateVersions), add `<name>` to the list in `flake.nix`, `git add` it, then
 `nixos-install --flake /mnt/home/tom/nix-dots/nixos#<name>`.
 
 The configs check for `/etc/NIXOS` where NixOS differs from Arch (hyprexpo, package aliases).
-Kitty Cam is not set up there. On small screens Quickshell shrinks the bar, menus and widgets on
+Kitty Cam is only linked on the PC host (`hosts/box`; the laptop has no webcam), and
+`hosts/box/README.md` lists what differs between the two machines. On small screens Quickshell shrinks the bar, menus and widgets on
 its own.
 
 ### Wallpapers and theming

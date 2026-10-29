@@ -31,6 +31,6 @@
       };
     in
     {
-      nixosConfigurations = nixpkgs.lib.genAttrs [ "nixbox" ] mkHost;
+      nixosConfigurations = nixpkgs.lib.genAttrs [ "nixbox" "box" ] mkHost;
     };
 }
