@@ -5,6 +5,13 @@
 { config, pkgs, ... }:
 
 let
+  # `nix-apply`: rebuilds and switches to this flake (scripts/nix-apply.sh)
+  nix-apply = pkgs.writeShellApplication {
+    name = "nix-apply";
+    runtimeInputs = with pkgs; [ git hostname ];
+    text = builtins.readFile ./scripts/nix-apply.sh;
+  };
+
   hyprexpo = pkgs.callPackage (pkgs.fetchFromGitHub {
     owner = "sandwichfarm";
     repo = "hyprexpo";
@@ -217,6 +224,7 @@ in
     git
     chromium
     claude-code
+    nix-apply
   ];
 
   fonts.packages = with pkgs; [
