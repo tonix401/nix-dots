@@ -50,6 +50,8 @@ hl.config({
   misc = {
     force_default_wallpaper = 0,
     disable_hyprland_logo   = true,
+    -- shown until awww-daemon has drawn the wallpaper (the first ~2 s after login), instead of black
+    background_color        = Colors.background,
   },
   ecosystem = {
     no_update_news = true,
