@@ -106,6 +106,10 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # The newest stable kernel instead of the LTS default; on nixbox the nvidia module is built against
+  # it, so if a release misbehaves, boot the previous generation and drop this line.
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Wi-Fi: bare iwd, which does its own DHCP, so iwgtk and the bar's iwctl talk to the only network
   # manager. NetworkManager with the iwd backend kept a throwaway in-memory copy of each network and
   # told iwd to Forget it (deleting the saved .psk) when that copy went away; saved passwords were
