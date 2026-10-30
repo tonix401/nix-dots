@@ -266,9 +266,9 @@ in
     sddmTheme
     git
     chromium # extensions and policies (programs.chromium) are in hosts/<hostname>/default.nix
-    claude-code
     podman-compose
     nix-apply
+    # claude-code and hermes-agent are installed with `nix profile`, not declared here.
   ];
 
   fonts.packages = with pkgs; [
