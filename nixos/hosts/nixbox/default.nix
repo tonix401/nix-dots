@@ -76,6 +76,27 @@ in
   };
   systemd.timers.home-snapshot.timerConfig.Persistent = true;
 
+  # Chromium: force-installed extensions (ExtensionInstallForcelist). No full uBlock Origin: it is MV2 and gone
+  # from the Web Store, so uBlock Origin Lite is the Chromium one.
+  programs.chromium = {
+    enable = true;
+    extensions = [
+      "ddkjiahejlhfcafbddmgiahcphecmpfh" # uBlock Origin Lite
+      "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
+      "likgccmbimhjbgkjambclfkhldnlhbnn" # Yomitan
+      "khncfooichmfjbepaaaebmommgaepoid" # Unhook - Remove YouTube Recommended & Shorts
+    ];
+    # Proton Pass is the password manager: switch off the built-in one
+    extraOpts = {
+      PasswordManagerEnabled = false;
+      DefaultSearchProviderEnabled = true;
+      DefaultSearchProviderName = "DuckDuckGo";
+      DefaultSearchProviderKeyword = "ddg";
+      DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
+      DefaultSearchProviderSuggestURL = "https://duckduckgo.com/ac/?q={searchTerms}&type=list";
+    };
+  };
+
   # Wi-Fi is a USB Realtek dongle (rtw88_8822bu, 5 GHz) and Bluetooth a UB500 dongle (RTL8761BU):
   # both need the firmware in redistributable-firmware, which hardware-configuration.nix pulls in
   # for the CPU microcode. Keep the two dongles away from the Logitech Bolt receiver (mouse lag).
