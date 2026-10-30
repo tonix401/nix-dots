@@ -106,10 +106,26 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # Enable networking
-  networking.networkmanager.enable = true;
-  # iwd backend so iwctl/iwgtk from the quickshell bar work
-  networking.networkmanager.wifi.backend = "iwd";
+  # Wi-Fi: bare iwd, which does its own DHCP, so iwgtk and the bar's iwctl talk to the only network
+  # manager. NetworkManager with the iwd backend kept a throwaway in-memory copy of each network and
+  # told iwd to Forget it (deleting the saved .psk) when that copy went away; saved passwords were
+  # lost after every session with a live nixos-rebuild switch (2026-10-29/30).
+  networking.wireless.iwd = {
+    enable = true;
+    settings = {
+      General.EnableNetworkConfiguration = true;
+      Network = {
+        EnableIPv6 = true;
+        # openresolv, the same resolv.conf manager tailscale writes through
+        NameResolvingService = "resolvconf";
+      };
+    };
+  };
+  # Wired ports only (iwd owns wlan*); "background" so an unplugged eno1 doesn't stall the boot
+  networking.dhcpcd = {
+    allowInterfaces = [ "en*" "eth*" ];
+    wait = "background";
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -141,7 +157,7 @@ in
   users.users.tom = {
     isNormalUser = true;
     description = "tom";
-    extraGroups = [ "networkmanager" "wheel" "i2c" ];
+    extraGroups = [ "wheel" "i2c" ];
     # Lets the sddm user reach the wallpaper in ~/.cache (traverse only, no listing)
     homeMode = "711";
     shell = pkgs.zsh;
