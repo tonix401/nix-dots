@@ -98,3 +98,33 @@ __colors_reload() {
     __colors_mtime=$mtime[1]
     source $ZDOTDIR/colors.zsh
 }
+
+# Nix dev shells. Starship's nix_shell module reads $IN_NIX_SHELL. `nix-shell` and `nix develop` set it
+# themselves but start bash instead of zsh; `nix shell` starts $SHELL but sets nothing. So the first two
+# are run with zsh as the command, and `nix shell` gets the variable. Calls that already pass a command
+# (-c, --command, --run) are left alone. These only apply to interactive zsh, not scripts or shebangs.
+nix-shell() {
+    local arg
+    for arg in "$@"; do
+        [[ $arg == (--command|--run|--exec) ]] && { command nix-shell "$@"; return }
+    done
+    command nix-shell "$@" --command zsh
+}
+
+nix() {
+    local arg
+    case $1 in
+        develop)
+            for arg in "${@:2}"; do
+                [[ $arg == (-c|--command) ]] && { command nix "$@"; return }
+            done
+            command nix "$@" --command zsh
+            ;;
+        shell)
+            IN_NIX_SHELL=impure command nix "$@"
+            ;;
+        *)
+            command nix "$@"
+            ;;
+    esac
+}
