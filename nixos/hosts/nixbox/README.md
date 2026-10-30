@@ -12,7 +12,6 @@ Hostnames: the PC was `box` and the laptop `nixbox` until 2026-10-29, when the l
 | CPU / chipset | nvme, sdhci, kvm-intel | i5-10400F: SATA AHCI, xHCI, kvm-intel (`hardware-configuration.nix`) |
 | Disk | ext4 root on NVMe | btrfs on SATA SSD (@, @home, @nix, @log, @snapshots, zstd:3) + monthly scrub |
 | Swap | none | zram 4 GB zstd |
-| Containers | Docker daemon, socket-activated, `docker` group | rootless Podman + docker shim, `DOCKER_HOST` = user podman.socket |
 | Network hardware | built-in Wi-Fi/BT | USB Wi-Fi dongle (rtw88_8822bu) + UB500 Bluetooth dongle (needs redistributable firmware); keep both away from the Bolt receiver |
 | Webcam / Kitty Cam | none, not linked | linked to `~/.config/kitty-cam`, gstreamer + pipewire plugins on `GST_PLUGIN_SYSTEM_PATH_1_0` |
 | Brightness | `brightnessctl` on `/sys/class/backlight` | DDC/CI through `ddcutil` (`hardware.i2c`, already in `common.nix`); `Monitor.qml` picks by itself |

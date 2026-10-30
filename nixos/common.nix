@@ -253,6 +253,15 @@ in
   # Installs LocalSend and opens its port (53317) in the firewall
   programs.localsend.enable = true;
 
+  # Containers: rootless Podman with a docker CLI shim; the user's podman.socket (DOCKER_HOST in
+  # home.nix) answers docker-API clients.
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    defaultNetwork.settings.dns_enabled = true;
+  };
+  systemd.user.sockets.podman.wantedBy = [ "sockets.target" ];
+
   # Chromium: force-installed extensions (ExtensionInstallForcelist). No full uBlock Origin: it is MV2 and gone
   # from the Web Store, so uBlock Origin Lite is the Chromium one.
   programs.chromium = {
@@ -279,6 +288,7 @@ in
     git
     chromium
     claude-code
+    podman-compose
     nix-apply
   ];
 

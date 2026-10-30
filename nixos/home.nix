@@ -203,6 +203,9 @@ in
     gtk-theme = "adw-gtk3-dark";
   };
 
+  # docker-API clients talk to the user's Podman socket (virtualisation.podman in common.nix)
+  home.sessionVariables.DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/podman/podman.sock";
+
   home.pointerCursor = {
     enable = true;
     name = "Bibata-Modern-Classic";

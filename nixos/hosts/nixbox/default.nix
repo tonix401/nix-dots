@@ -76,16 +76,6 @@ in
   };
   systemd.timers.home-snapshot.timerConfig.Persistent = true;
 
-  # Rootless Podman with a docker CLI shim instead of the Docker daemon (as on Arch); the user's
-  # podman.socket (below, DOCKER_HOST) answers docker-API clients.
-  virtualisation.podman = {
-    enable = true;
-    dockerCompat = true;
-    defaultNetwork.settings.dns_enabled = true;
-  };
-  environment.systemPackages = [ pkgs.podman-compose ];
-  systemd.user.sockets.podman.wantedBy = [ "sockets.target" ];
-
   # Wi-Fi is a USB Realtek dongle (rtw88_8822bu, 5 GHz) and Bluetooth a UB500 dongle (RTL8761BU):
   # both need the firmware in redistributable-firmware, which hardware-configuration.nix pulls in
   # for the CPU microcode. Keep the two dongles away from the Logitech Bolt receiver (mouse lag).
@@ -97,7 +87,6 @@ in
     lib.makeSearchPathOutput "lib" "lib/gstreamer-1.0" gstPlugins;
   home-manager.users.tom = { config, ... }: {
     home.stateVersion = "25.11";
-    home.sessionVariables.DOCKER_HOST = "unix://$XDG_RUNTIME_DIR/podman/podman.sock";
     xdg.configFile."kitty-cam".source =
       config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nix-dots/kitty-cam";
     home.packages = gstPlugins;
