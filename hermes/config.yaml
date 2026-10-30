@@ -92,3 +92,5 @@ display:
 onboarding:
   seen:
     tool_progress_prompt: true
+approvals:
+  destructive_slash_confirm: false
