@@ -229,9 +229,7 @@ in
     # menus, clipboard, screenshots
     grimblast
     cliphist
-    wtype
     wl-clipboard
-    libnotify
     imagemagick
     librsvg
     # rofimoji's module provides the emoji data for quickshell/scripts/emoji.py; numpy is for
