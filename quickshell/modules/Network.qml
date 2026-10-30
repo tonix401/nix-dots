@@ -12,13 +12,13 @@ Module {
         case "wifi":
             return Theme.g(Util.bucket(wifiIcons, info.signal)) + " " + Privacy.mask(info.ssid);
         case "ethernet":
-            return Theme.g(0xef09);
+            return Theme.g(0xef09)  + " ethernet";
         case "disabled":
-            return Theme.g(0xf092e);
+            return Theme.g(0xf092e) + " disabled";
         case "disconnected":
-            return Theme.g(0xf0923) + "  disconnected";
+            return Theme.g(0xf0923) + " disconnected";
         default:
-            return "";
+            return info.state;
         }
     }
     onClicked: Net.toggleWifi()
