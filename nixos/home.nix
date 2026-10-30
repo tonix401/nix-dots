@@ -258,18 +258,9 @@ in
     eza
     zoxide
     fzf
-    fortune
-    cowsay
-    lolcat
 
-    # apps
-    anki
-    mousepad
-    vscode
-    signal-desktop
-    transmission_4-gtk
-    obsidian
-    vlc
-    mpv
+    # Standalone apps and toys (anki, mousepad, vscode, signal-desktop, transmission_4-gtk,
+    # obsidian, vlc, mpv, fortune, cowsay, lolcat) are installed with `nix profile install`,
+    # not declared here.
   ];
 }
