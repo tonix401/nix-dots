@@ -102,6 +102,17 @@ in
   # for the CPU microcode. Keep the two dongles away from the Logitech Bolt receiver (mouse lag).
   hardware.enableRedistributableFirmware = true;
 
+  # The one monitor: its 99.98 Hz mode pinned (the preferred mode is 60 Hz), unscaled. Replaces the
+  # generic monitor rule in hypr/hyprland.lua.
+  environment.etc."hypr/host.lua".text = ''
+    hl.monitor({
+      output   = "",
+      mode     = "3440x1440@99.98",
+      position = "auto",
+      scale    = "1",
+    })
+  '';
+
   # Kitty Cam: the cat as a webcam (the laptop has none). Linked like the other configs, so the
   # keybinds' soundboard (hypr/keybinds.lua) finds ~/.config/kitty-cam/kitty-cam.
   environment.sessionVariables.GST_PLUGIN_SYSTEM_PATH_1_0 =

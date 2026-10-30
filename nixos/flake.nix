@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # The registry's `nixpkgs` (what `nix profile add nixpkgs#x` resolves): the same nixpkgs with allowUnfree
+    nixpkgs-unfree = {
+      url = "path:./nixpkgs-unfree";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       # One nixpkgs for the system and home.nix (useGlobalPkgs already shares the package set)
@@ -16,7 +21,7 @@
     # Hermes Agent and Claude Code are installed with `nix profile`, not declared here.
   };
 
-  outputs = { nixpkgs, home-manager, desktop-goose, ... }:
+  outputs = { nixpkgs, nixpkgs-unfree, home-manager, desktop-goose, ... }:
     let
       # A machine: the shared config plus hosts/<name>. nixos-rebuild --flake picks the one named
       # after the hostname.
@@ -26,6 +31,12 @@
           ./hosts/${name}
           home-manager.nixosModules.home-manager
           ({ pkgs, ... }: {
+            # Flake evaluation ignores nixpkgs.config, so `nix profile add nixpkgs#vscode` needs a registry
+            # entry whose package set allows unfree. <nixpkgs> stays the plain source for nix-shell -p.
+            nixpkgs.flake.setFlakeRegistry = false;
+            nixpkgs.flake.setNixPath = false;
+            nix.registry.nixpkgs.flake = nixpkgs-unfree;
+            nix.nixPath = [ "nixpkgs=${nixpkgs}" ];
             home-manager.extraSpecialArgs.goose = desktop-goose.packages.${pkgs.stdenv.hostPlatform.system}.default;
           })
         ];

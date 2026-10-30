@@ -57,11 +57,28 @@
         "type": "github"
       }
     },
+    "nixpkgs-unfree": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "path": "./nixpkgs-unfree",
+        "type": "path"
+      },
+      "original": {
+        "path": "./nixpkgs-unfree",
+        "type": "path"
+      },
+      "parent": []
+    },
     "root": {
       "inputs": {
         "desktop-goose": "desktop-goose",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-unfree": "nixpkgs-unfree"
       }
     }
   },
