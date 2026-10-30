@@ -159,6 +159,7 @@ in
   # it with AnkiWeb (pkgs/anki-connect-server.nix). Its settings and the AnkiWeb login are in
   # ~/.config/anki-connect-server/env (chmod 600, ANKICONNECT_COLLECTION_PATH, _PORT, _BIND,
   # _ANKIWEB_USER, _ANKIWEB_PASS), kept out of the repo and the store; it doesn't start until that exists.
+  # Template: pkgs/anki-connect-server.env.example.
   systemd.user.services.anki-connect-server = {
     Unit = {
       Description = "Headless AnkiConnect-compatible API server (no Qt/GUI)";
