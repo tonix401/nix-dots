@@ -54,22 +54,14 @@ in
         (builtins.readFile ../nano/nanorc);
   };
 
-  # Claude Code and Hermes: only the declarative files are linked (writable, so `/config` and
-  # `hermes config` still work). Credentials, history, sessions and caches stay unversioned, and
-  # ~/.hermes/memories is a link into the knowledge vault, which has its own git sync.
+  # Claude Code and Hermes are `nix profile` apps, so their config is not managed here: it lives in
+  # the knowledge vault, linked by ~/knowledge/scripts/link-agent-config.sh.
   home.file = {
     # zsh reads the rest of its config from ~/.config/zsh
     ".zshenv".text = ''
       export ZDOTDIR="$HOME/.config/zsh"
       source "$ZDOTDIR/.zshenv"
     '';
-
-    ".claude/CLAUDE.md" = link "claude/CLAUDE.md";
-    ".claude/settings.json" = link "claude/settings.json";
-    ".hermes/config.yaml" = link "hermes/config.yaml";
-    ".hermes/SOUL.md" = link "hermes/SOUL.md";
-    ".hermes/memories".source =
-      config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/knowledge/hermes/memories";
   };
 
   # The zsh plugins box-dots/zsh/.zshrc loads, at ~/.local/share/zsh/plugins/<name>/<name>.zsh (Arch
