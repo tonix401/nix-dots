@@ -35,9 +35,7 @@ in
     nvidiaSettings = false;
   };
 
-  # The newest stable kernel instead of the LTS default; the nvidia module is built against it, so
-  # if a kernel release breaks the driver, boot the previous generation and drop this line.
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # NVIDIA module is built against the kernel set in common.nix (linuxPackages_latest)
 
   # Boot splash: Plymouth with the NixOS snowflake and a progress bar (pkgs/plymouth-nixos-theme.nix).
   # `quiet`/`splash` and the zero log levels keep kernel and initrd text from painting over it.
