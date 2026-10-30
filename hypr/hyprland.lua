@@ -13,12 +13,20 @@ require("windowrules")
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-hl.monitor({
-  output   = "",
-  mode     = "3440x1440@99.98",
-  position = "auto",
-  scale    = "auto",
-})
+-- Every screen: its preferred mode, unscaled (auto picks 1.5 on a 1920x1080 laptop panel).
+-- A machine with different needs ships /etc/hypr/host.lua (hosts/<name>/default.nix on NixOS),
+-- which replaces this rule.
+local host_monitors = loadfile("/etc/hypr/host.lua")
+if host_monitors then
+  host_monitors()
+else
+  hl.monitor({
+    output   = "",
+    mode     = "preferred",
+    position = "auto",
+    scale    = "1",
+  })
+end
 
 -----------------
 ----  INPUT  ----
@@ -28,7 +36,10 @@ hl.config({
   input = {
     kb_layout  = "us",
     kb_variant = "intl",
-    kb_options = "caps:none"
+    kb_options = "caps:none",
+    touchpad = {
+      natural_scroll = true,
+    },
   },
   general = {
     layout = "dwindle",

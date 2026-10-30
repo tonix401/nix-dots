@@ -5,8 +5,8 @@ Hostnames: the PC was `box` and the laptop `nixbox` until 2026-10-29, when the l
 
 | Area | Laptop (`nixtop`) | PC (`nixbox`) |
 |---|---|---|
-| Display | `eDP-1` 1920x1080, scale 1 pinned (auto picks 1.5) | one 3440x1440 monitor on HDMI, `@99.98` pinned, scale auto (`hypr/hyprland.lua`) |
-| Input | touchpad, natural scroll | mouse (Logitech Bolt) only, no touchpad block |
+| Display | `eDP-1` 1920x1080, preferred mode, scale 1 (generic rule in `hypr/hyprland.lua`) | one 3440x1440 monitor on HDMI, `@99.98` pinned, scale 1 (`/etc/hypr/host.lua` from `hosts/nixbox`) |
+| Input | touchpad, natural scroll (shared `hypr/hyprland.lua`; ignored without a touchpad) | mouse (Logitech Bolt) only |
 | SDDM greeter size | 1920x1080 | 3440x1440 (`common.nix`) |
 | GPU | nothing set (mesa defaults) | RTX 2060 12GB, `hardware.nvidia.open` + modesetting (`hosts/nixbox`) |
 | CPU / chipset | nvme, sdhci, kvm-intel | i5-10400F: SATA AHCI, xHCI, kvm-intel (`hardware-configuration.nix`) |
