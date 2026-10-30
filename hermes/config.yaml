@@ -89,3 +89,6 @@ smart_model_routing:
   enabled: false
 display:
   skin: matugen
+onboarding:
+  seen:
+    tool_progress_prompt: true
