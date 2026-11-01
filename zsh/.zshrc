@@ -25,8 +25,13 @@ setopt NO_BEEP
 # Completion: a menu to move through with the arrows or tab, case-insensitive, with descriptions
 zmodload zsh/complist
 autoload -Uz compinit
-mkdir -p ${XDG_CACHE_HOME:-$HOME/.cache}/zsh
-compinit -d ${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION
+__cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
+mkdir -p $__cache_dir
+# -C skips compaudit's permission scan (~20 ms a shell); the full check still runs when the dump is
+# more than a day old
+__zcd=$__cache_dir/zcompdump-$ZSH_VERSION
+if [[ -n $__zcd(N.mh-24) ]]; then compinit -C -d $__zcd; else compinit -d $__zcd; fi
+unset __zcd
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
@@ -193,15 +198,24 @@ __bind __clipboard_paste '^V'
 __bind __clipboard_copy '^X'
 
 # Ctrl-R: search history in fzf (fish's Ctrl-R pager); fzf's Ctrl-T and Alt-C are left off
-FZF_CTRL_T_COMMAND= FZF_ALT_C_COMMAND= source <(fzf --zsh)
+# Init scripts of external tools, cached so a new shell doesn't run fzf/starship/zoxide. The tool's
+# nix store path is part of the file name, so an update regenerates it.
+__cached_init() {
+    local bin=${commands[$1]:A} out
+    out=$__cache_dir/init-$1-${${bin:h:h}:t}.zsh
+    [[ -r $out ]] || "$@" > $out
+    source $out
+}
+
+FZF_CTRL_T_COMMAND= FZF_ALT_C_COMMAND= __cached_init fzf --zsh
 
 source $ZDOTDIR/aliases.zsh
 source $ZDOTDIR/functions.zsh
 source $ZDOTDIR/cat.zsh
 __colors_reload
 
-eval "$(starship init zsh)"
-eval "$(zoxide init zsh)"
+__cached_init starship init zsh
+__cached_init zoxide init zsh
 
 # kitty integrates with the shell it starts (fish), not with a zsh started from fish: load it here
 # (prompt marks, titles, cursor shape). A no-op when it's already loaded.
