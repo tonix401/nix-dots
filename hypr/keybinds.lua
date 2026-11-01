@@ -1,10 +1,17 @@
 local function exec(cmd) return hl.dsp.exec_cmd(cmd) end
--- Apps get their own systemd scope via uwsm (see exec.lua); one-shot commands stay on exec.
-local function app(cmd) return hl.dsp.exec_cmd("uwsm app -- " .. cmd) end
+-- Apps get their own systemd scope, named like uwsm's (app-Hyprland-<app>-<pid>.scope); one-shot
+-- commands stay on exec. systemd-run instead of `uwsm app`: the same scope without ~120 ms of
+-- Python startup per launch. $$ is the launching shell's pid, so each launch gets a fresh name.
+local function scoped(cmd)
+  local name = (cmd:match("^%S+"):gsub(".*/", ""):gsub("[^%w_.-]", "_"))
+  return "systemd-run --user --scope --quiet --slice=app-graphical.slice"
+    .. " --unit=app-Hyprland-" .. name .. "-$$.scope --description=" .. name .. " -- " .. cmd
+end
+local function app(cmd) return hl.dsp.exec_cmd(scoped(cmd)) end
 -- Heavy apps start ~2x faster with the CPU unthrottled: hold the performance profile for the first
 -- few seconds, then power-profiles-daemon drops back to whatever the bar toggle set.
 local function boosted(cmd)
-  return hl.dsp.exec_cmd("powerprofilesctl launch -p performance -r 'app startup' sleep 3 & uwsm app -- " .. cmd)
+  return hl.dsp.exec_cmd("powerprofilesctl launch -p performance -r 'app startup' sleep 3 & " .. scoped(cmd))
 end
 
 -- ── Window ────────────────────────────────────────────────────────────────────
