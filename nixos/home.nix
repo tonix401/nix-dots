@@ -251,6 +251,7 @@ in
     eza
     zoxide
     fzf
+    unzip
 
     # Standalone apps and toys (anki, mousepad, vscode, signal-desktop, transmission_4-gtk,
     # obsidian, vlc, mpv, fortune, cowsay, lolcat) are installed with `nix profile install`,
