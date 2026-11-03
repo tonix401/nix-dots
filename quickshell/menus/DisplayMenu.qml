@@ -11,9 +11,11 @@ import qs
 // disabled ones too) as a scaled picture of the layout. Extend lines them up left to right in the
 // order shown, aligned at the top, center or bottom; Mirror shows the selected one on all others;
 // Only one turns the others off. The picked display's resolution and scale are set in the row under
-// the picture. Applied live with `hyprctl eval`, so hyprland.lua's monitor rules are back after a
-// reload. Same box as the share menu. Keys: Tab / 1-3 switch tabs, ←/→ (H/L) pick, Shift+←/→ move
-// the picked one, T/C/B align, [ / ] resolution, - / + scale, Enter applies, Esc closes.
+// the picture. Applied live with `hyprctl eval`, and saved as the profile for this set of displays
+// (Displays.qml), which is put back whenever the same displays are connected again and after a
+// config reload. Same box as the share menu. Keys: Tab / 1-3 switch tabs, ←/→ (H/L) pick, Shift+←/→
+// move the picked one, T/C/B align, [ / ] resolution, - / + scale, Enter applies, Del forgets the
+// profile, Esc closes.
 PanelWindow {
     id: root
 
@@ -58,7 +60,11 @@ PanelWindow {
     property string align: "top"
     property int selected: 0 // index into order
     property string error: ""
+    property var ids: ({}) // connector -> profile id (Displays.ids)
+    property var applied: [] // the rules being applied, saved once hyprctl says ok
 
+    readonly property string setKey: Displays.keyOf(ids)
+    readonly property var profile: count > 0 ? Displays.profiles[setKey] ?? null : null
     readonly property int count: order.length
     readonly property var layout: arrange(order, align)
     readonly property var current: monitors[order[selected]] ?? null
@@ -206,6 +212,7 @@ PanelWindow {
     }
 
     function load(list) {
+        ids = Displays.ids(list);
         monitors = parse(list);
         const all = Object.values(monitors);
         const on = all.filter(m => !m.disabled && !m.mirrorOf);
@@ -251,11 +258,6 @@ PanelWindow {
         error = "";
     }
 
-    function lua(spec) {
-        const fields = Object.entries(spec).map(([k, v]) => `${k} = ${typeof v === "string" ? JSON.stringify(v) : v}`);
-        return `hl.monitor({ ${fields.join(", ")} })`;
-    }
-
     // A rule for an output keeps an earlier rule's mirror or disabled unless it says otherwise.
     function rule(name, position, extra) {
         return Object.assign({
@@ -284,8 +286,20 @@ PanelWindow {
                     }));
         }
         error = "";
-        applier.command = ["hyprctl", "eval", specs.map(lua).join("; ")];
+        applied = specs;
+        applier.command = ["hyprctl", "eval", Displays.luaAll(specs)];
         applier.running = true;
+    }
+
+    // Drops the saved profile; what's on screen stays until the displays change or Hyprland reloads.
+    function forget() {
+        if (profile)
+            Displays.forget(setKey);
+    }
+
+    function savedOn(iso) {
+        const d = new Date(iso);
+        return isNaN(d) ? "" : ` on ${d.toLocaleDateString(Qt.locale(), Locale.ShortFormat)}`;
     }
 
     Process {
@@ -308,9 +322,10 @@ PanelWindow {
         stdout: StdioCollector {
             onStreamFinished: {
                 const out = text.trim();
-                if (out === "ok")
+                if (out === "ok") {
+                    Displays.save(root.ids, root.applied);
                     Menus.close();
-                else
+                } else
                     root.error = out || "hyprctl eval failed";
             }
         }
@@ -502,6 +517,8 @@ PanelWindow {
                     root.stepScale(-1);
                 else if (k === Qt.Key_Plus || k === Qt.Key_Equal)
                     root.stepScale(1);
+                else if (k === Qt.Key_Delete)
+                    root.forget();
                 else
                     return;
                 event.accepted = true;
@@ -546,7 +563,9 @@ PanelWindow {
                         font.weight: Font.Medium
                     }
                     Text {
-                        text: "Arrange, mirror or pick which displays to use."
+                        width: parent.width
+                        elide: Text.ElideRight
+                        text: root.profile ? `Saved for these displays${root.savedOn(root.profile.saved)}, used again whenever they're connected.` : "Arrange, mirror or pick which displays to use. Apply remembers it for these displays."
                         color: Theme.on_surface_variant
                         font.family: Theme.uiFont
                         font.pixelSize: 12
@@ -1016,10 +1035,18 @@ PanelWindow {
                 Text {
                     Layout.fillWidth: true
                     elide: Text.ElideRight
-                    text: root.error !== "" ? root.error : root.tab === 0 ? "Drag or Shift+←/→ to reorder · T/C/B align · [ ] resolution · −/+ scale · back to hyprland.lua on reload" : "←/→ to pick · [ ] resolution · −/+ scale · back to hyprland.lua on reload"
+                    text: root.error !== "" ? root.error : root.tab === 0 ? "Drag or Shift+←/→ to reorder · T/C/B align · [ ] resolution · −/+ scale" : "←/→ to pick · [ ] resolution · −/+ scale"
                     color: root.error !== "" ? Theme.error : Theme.outline
                     font.family: Theme.uiFont
                     font.pixelSize: 12
+                }
+
+                // drops the saved profile (Del); hidden when there is none
+                PillButton {
+                    visible: !!root.profile
+                    glyph: 0xf0a7a // trash
+                    label: "Forget"
+                    onClicked: root.forget()
                 }
 
                 PillButton {
