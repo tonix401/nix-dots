@@ -37,6 +37,8 @@ ShellRoot {
     readonly property int gap: Theme.compact ? 12 : 16 // between the widgets and below the bar
     readonly property int fade: 160 // the bands' fade beside the widgets
     readonly property int panelTop: Theme.barTop + Theme.barHeight + gap // the panels' top, under the bar
+    // Bound so the Displays singleton starts at launch and applies a saved display profile right away.
+    readonly property string displaySet: Displays.key
 
     Variants {
         id: desktops
@@ -276,6 +278,24 @@ ShellRoot {
         }
         function close(): void {
             Menus.close();
+        }
+    }
+
+    // Display profiles (Displays.qml, saved by the display menu): `qs ipc call display connected` names the
+    // displays connected now, `forget` drops their profile, `apply` puts it back.
+    IpcHandler {
+        target: "display"
+
+        // The displays connected now, as the profiles key them.
+        function connected(): string {
+            return Displays.key;
+        }
+        function forget(): bool {
+            return Displays.forget(Displays.key);
+        }
+        function apply(): void {
+            Displays.force = true;
+            Displays.check();
         }
     }
 
