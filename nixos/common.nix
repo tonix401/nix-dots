@@ -245,7 +245,11 @@ in
   services.blueman.enable = true;
 
   services.power-profiles-daemon.enable = true;
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    # Lets the quickshell bar run `tailscale up/down` without sudo
+    extraSetFlags = [ "--operator=tom" ];
+  };
 
   # Monitor brightness over DDC/CI (ddcutil in quickshell)
   hardware.i2c.enable = true;
