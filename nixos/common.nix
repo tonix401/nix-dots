@@ -251,6 +251,10 @@ in
     extraSetFlags = [ "--operator=tom" ];
   };
 
+  # Removable drives: udisks2 mounts them, gvfs is what lets nemo list and mount them
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
+
   # Monitor brightness over DDC/CI (ddcutil in quickshell)
   hardware.i2c.enable = true;
 
@@ -272,6 +276,7 @@ in
     chromium # extensions and policies (programs.chromium) are in hosts/<hostname>/default.nix
     podman-compose
     nix-apply
+    xxd
     # claude-code and hermes-agent are installed with `nix profile`, not declared here.
   ];
 
