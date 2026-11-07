@@ -6,7 +6,25 @@ let
   link = name: { source = config.lib.file.mkOutOfStoreSymlink "${dots}/${name}"; };
   # The Anki GUI and anki-connect-server lock the same collection, so the GUI runs with the server
   # (and its sync timer) stopped and brings them back when it exits.
+  # Tools for anki/yomitan_core.py (audio): a local Mandarin voice and the mp3 encoder
+  piperVoice = pkgs.runCommand "piper-voice-zh_CN-huayan-medium" { } ''
+    mkdir $out
+    ln -s ${pkgs.fetchurl {
+      url = "https://huggingface.co/rhasspy/piper-voices/resolve/main/zh/zh_CN/huayan/medium/zh_CN-huayan-medium.onnx";
+      sha256 = "0g8gpqqf42s2299pc53s663ixhcrcqx4v94fabyjdfyaz1xr2acr";
+    }} $out/zh_CN-huayan-medium.onnx
+    ln -s ${pkgs.fetchurl {
+      url = "https://huggingface.co/rhasspy/piper-voices/resolve/main/zh/zh_CN/huayan/medium/zh_CN-huayan-medium.onnx.json";
+      sha256 = "0ax8ssg94h0sngdy61zv1f203mvdjhsjp0i5wfcwr32aa12xq8fm";
+    }} $out/zh_CN-huayan-medium.onnx.json
+  '';
+  yomitanEnv = {
+    YOMITAN_PIPER = lib.getExe pkgs.piper-tts;
+    YOMITAN_PIPER_MODEL = "${piperVoice}/zh_CN-huayan-medium.onnx";
+    YOMITAN_FFMPEG = lib.getExe' pkgs.ffmpeg-headless "ffmpeg";
+  };
   ankiGui = pkgs.writeShellScript "anki-gui" ''
+    ${lib.concatStringsSep "\n" (lib.mapAttrsToList (k: v: "export ${k}=${lib.escapeShellArg v}") yomitanEnv)}
     ctl=${pkgs.systemd}/bin/systemctl
     $ctl --user stop anki-connect-sync.timer anki-connect-server.service
     trap '$ctl --user start anki-connect-server.service anki-connect-sync.timer' EXIT
@@ -113,6 +131,13 @@ in
     MimeType=application/x-apkg;application/x-anki;application/x-colpkg;
   '';
 
+  # The Yomitan note hooks as an Anki add-on (the headless server runs them through anki-connect-server-yomitan)
+  home.file.".local/share/Anki2/addons21/yomitan_hooks".source = pkgs.runCommand "anki-addon-yomitan-hooks" { } ''
+    mkdir $out
+    cp ${./anki/addon/__init__.py} $out/__init__.py
+    cp ${./anki/yomitan_core.py} $out/yomitan_core.py
+  '';
+
   programs.git = {
     enable = true;
     settings.user = {
@@ -182,7 +207,8 @@ in
     Service = {
       Type = "simple";
       EnvironmentFile = "%h/.config/anki-connect-server/env";
-      ExecStart = "${pkgs.callPackage ./pkgs/anki-connect-server.nix { }}/bin/anki-connect-server api";
+      ExecStart = "${pkgs.callPackage ./pkgs/anki-connect-server.nix { }}/bin/anki-connect-server-yomitan api";
+      Environment = lib.mapAttrsToList (k: v: "${k}=${v}") yomitanEnv;
       Restart = "on-failure";
       RestartSec = 5;
     };
