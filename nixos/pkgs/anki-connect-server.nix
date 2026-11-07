@@ -54,4 +54,31 @@ python3Packages.buildPythonApplication rec {
   # fastmcp is only for the `mcp` subcommand (cli.py imports it there), and nixpkgs marks it broken
   # against mcp 2; `api`, the one the service runs, doesn't touch it. `mcp` fails here.
   pythonRemoveDeps = [ "fastmcp" ];
+
+  # anki-connect-server-yomitan: the same server with the Yomitan note hooks (anki/yomitan_core.py)
+  # registered, which the app runs as an add-on. `fix [collection]` runs them over existing notes.
+  # wrapPythonPrograms gives the script the package's Python path, so it sees anki and the server.
+  postInstall = ''
+    install -Dm644 ${../anki/yomitan_core.py} $out/${python3Packages.python.sitePackages}/yomitan_core.py
+    cat > $out/bin/anki-connect-server-yomitan <<'EOF'
+    #!/usr/bin/env python3
+    import os
+    import sys
+
+    import yomitan_core
+
+    if sys.argv[1:2] == ["fix"]:
+        from anki.collection import Collection
+
+        col = Collection(sys.argv[2] if len(sys.argv) > 2 else os.environ["ANKICONNECT_COLLECTION_PATH"])
+        print("changed", yomitan_core.fix_collection(col))
+        col.close()
+    else:
+        yomitan_core.register()
+        from anki_connect_server.cli import main
+
+        sys.exit(main())
+    EOF
+    chmod +x $out/bin/anki-connect-server-yomitan
+  '';
 }
