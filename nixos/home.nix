@@ -4,6 +4,14 @@ let
   dots = "${config.home.homeDirectory}/nix-dots";
   # Out-of-store links keep the files writable, so matugen can regenerate colors
   link = name: { source = config.lib.file.mkOutOfStoreSymlink "${dots}/${name}"; };
+  # The Anki GUI and anki-connect-server lock the same collection, so the GUI runs with the server
+  # (and its sync timer) stopped and brings them back when it exits.
+  ankiGui = pkgs.writeShellScript "anki-gui" ''
+    ctl=${pkgs.systemd}/bin/systemctl
+    $ctl --user stop anki-connect-sync.timer anki-connect-server.service
+    trap '$ctl --user start anki-connect-server.service anki-connect-sync.timer' EXIT
+    ${config.home.homeDirectory}/.nix-profile/bin/anki "$@"
+  '';
 in
 {
   home.username = "tom";
@@ -90,6 +98,20 @@ in
     clipboard = { name = "Clipboard History"; icon = "edit-paste"; comment = "Paste from the clipboard history"; };
     power = { name = "Power Menu"; icon = "system-shutdown"; comment = "Shut down, reboot, lock or log out"; };
   };
+
+  # Shadows the profile's anki.desktop: ~/.local/share/applications beats every profile in XDG_DATA_DIRS,
+  # while an xdg.desktopEntries one would land in the per-user profile, behind ~/.nix-profile.
+  home.file.".local/share/applications/anki.desktop".text = ''
+    [Desktop Entry]
+    Type=Application
+    Name=Anki
+    GenericName=Flashcards
+    Icon=anki
+    Exec=${ankiGui} %f
+    Terminal=false
+    Categories=Education;Languages;
+    MimeType=application/x-apkg;application/x-anki;application/x-colpkg;
+  '';
 
   programs.git = {
     enable = true;
