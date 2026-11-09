@@ -112,14 +112,3 @@ hl.bind("CTRL + SPACE", hl.dsp.global("quickshell:cycleInputMethod"), { desc = "
 -- ─── Utils ────────────────────────────────────────────────────────────────────
 hl.bind("SHIFT + SUPER + S", exec("~/.config/hypr/scripts/screenshot.py"), { desc = "Screenshot" })
 hl.bind("SHIFT + SUPER + C", exec("hyprpicker | wl-copy"),                  { desc = "Pick color to clipboard" })
-
-hl.bind("SUPER + TAB", function() hl.plugin.hyprexpo.expo("toggle") end, { desc = "Toggle workspace overview" })
-
-hl.define_submap("hyprexpo",function()
-    hl.bind("left",         function() hl.plugin.hyprexpo.kb_focus("left") end)
-    hl.bind("right",        function() hl.plugin.hyprexpo.kb_focus("right") end)
-    hl.bind("up",           function() hl.plugin.hyprexpo.kb_focus("up") end)
-    hl.bind("down",         function() hl.plugin.hyprexpo.kb_focus("down") end)
-    hl.bind("return",       function() hl.plugin.hyprexpo.kb_confirm() end)
-    hl.bind("escape",       function() hl.plugin.hyprexpo.expo("cancel") end)
-end)

@@ -18,7 +18,7 @@ Hostnames: the PC was `box` and the laptop `nixbox` until 2026-10-29, when the l
 | Battery | bar block + btop battery | none; `modules/Battery.qml` hides itself, nothing to change |
 
 Not machine differences (left alone): the Nix vs Arch logo, workspaces linking (works on one screen),
-hyprexpo from `/etc/hypr/plugins`, bare iwd for Wi-Fi (as on the Arch PC; NetworkManager with the
+bare iwd for Wi-Fi (as on the Arch PC; NetworkManager with the
 iwd backend was dropped on 2026-10-30 because it made iwd forget saved networks).
 
 ## Installing on the PC

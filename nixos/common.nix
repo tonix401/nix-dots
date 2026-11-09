@@ -12,13 +12,6 @@ let
     text = builtins.readFile ./scripts/nix-apply.sh;
   };
 
-  hyprexpo = pkgs.callPackage (pkgs.fetchFromGitHub {
-    owner = "sandwichfarm";
-    repo = "hyprexpo";
-    rev = "a54d20e433831eb9a5770e052c48736421ba7db5";
-    hash = "sha256-L3QG1HvO2tdaAgYrOxaiqn/NXs9kECHEP78h2+8pZ6A=";
-  }) { };
-
   # Same look as the Arch box: the post-apocalyptic_hacker preset with its colors fixed (not
   # matugen) and the background following the current wallpaper.
   sddmTheme = pkgs.sddm-astronaut.override {
@@ -210,9 +203,6 @@ in
   xdg.portal.extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   # dconf backs the gsettings the gtk portal reads the dark-mode preference from (home.nix dconf.settings)
   programs.dconf.enable = true;
-
-  # Loaded from ~/.config/hypr/hyprland.lua; replaces hyprpm on NixOS
-  environment.etc."hypr/plugins/hyprexpo.so".source = "${hyprexpo}/lib/libhyprexpo.so";
 
   # The login shell. box-dots/zsh runs compinit and the prompt itself, so /etc/zshrc doesn't.
   programs.zsh = {

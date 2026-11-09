@@ -31,12 +31,6 @@ blueman \
 tailscale \
 dankcalendar (dcal)
 
-```
-hyprpm add https://github.com/sandwichfarm/hyprexpo
-hyprpm enable hyprexpo
-hyprpm reload
-```
-
 ### Layout
 
 - `hypr/`: Hyprland config in Lua (`hyprland.lua` entry point, `exec.lua` autostart,
@@ -81,7 +75,7 @@ to `/mnt/home/tom/nix-dots`. Create `hosts/<name>/` with that `hardware-configur
 both stateVersions), add `<name>` to the list in `flake.nix`, `git add` it, then
 `nixos-install --flake /mnt/home/tom/nix-dots/nixos#<name>`.
 
-The configs check for `/etc/NIXOS` where NixOS differs from Arch (hyprexpo, package aliases).
+The configs check for `/etc/NIXOS` where NixOS differs from Arch (package aliases).
 Kitty Cam is only linked on the PC host (`hosts/nixbox`; the laptop has no webcam), and
 `hosts/nixbox/README.md` lists what differs between the two machines. On small screens Quickshell shrinks the bar, menus and widgets on
 its own.
@@ -111,7 +105,6 @@ palette by itself.
 | Key | Action |
 |---|---|
 | SUPER + D | Show / hide the desktop widgets |
-| SUPER + TAB | Workspace overview (hyprexpo) |
 | CTRL + SPACE | Cycle input method (English, Japanese, Chinese) |
 | SHIFT + SUPER + S | Screenshot of an area |
 | SHIFT + SUPER + C | Pick a color to the clipboard |
