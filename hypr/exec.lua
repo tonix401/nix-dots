@@ -25,5 +25,4 @@ hl.on("hyprland.start", function()
   -- git-syncing ~/knowledge directly (vault-sync.timer), and Anki is replaced by the
   -- anki-connect-server systemd user service (headless AnkiConnect API + AnkiWeb sync,
   -- no Qt/GUI). See ~/knowledge/reference/Environment & Tooling.md.
-  hl.exec_cmd("[ -e /etc/NIXOS ] || hyprpm reload") -- NixOS loads hyprexpo in hyprland.lua instead
 end)

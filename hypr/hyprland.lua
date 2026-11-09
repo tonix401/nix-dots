@@ -1,5 +1,3 @@
--- Provided by the NixOS config; on other systems hyprpm loads it (see exec.lua)
-pcall(hl.plugin.load, "/etc/hypr/plugins/hyprexpo.so")
 
 require("exec")
 require("workspaces")
@@ -67,16 +65,4 @@ hl.config({
   ecosystem = {
     no_update_news = true,
   },
-  -- plugin = {
-  --   hyprexpo = {
-  --     columns = 3,
-  --     gaps_in = 8,
-  --     gaps_out = 8,
-  --     bg_col = "rgb(000000)",
-  --     workspace_method = "center current",
-  --     show_cursor = 1,
-  --     tile_rounding = 12,
-  --     tile_rounding_power = 2.0
-  --   },
-  -- },
 })
