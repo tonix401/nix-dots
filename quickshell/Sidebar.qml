@@ -26,6 +26,7 @@ Singleton {
     function close() {
         pinned = false;
         closeTimer.stop();
+        openTimer.stop();
         open = false;
     }
 
@@ -33,8 +34,13 @@ Singleton {
     onWantedChanged: {
         if (wanted) {
             closeTimer.stop();
-            open = true;
+            // Touching the screen edge only counts after a short dwell, so brushing past it doesn't pop the drawer.
+            if (open || pinned || panelHovered)
+                open = true;
+            else
+                openTimer.restart();
         } else {
+            openTimer.stop();
             closeTimer.restart();
         }
     }
@@ -42,6 +48,13 @@ Singleton {
     // Once the pointer is on a pinned drawer, hovering takes over: leaving closes it.
     onPanelHoveredChanged: if (panelHovered)
         pinned = false
+
+    Timer {
+        id: openTimer
+        interval: 600
+        onTriggered: if (root.wanted)
+            root.open = true
+    }
 
     Timer {
         id: closeTimer
