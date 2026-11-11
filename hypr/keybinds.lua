@@ -88,7 +88,6 @@ hl.bind("SUPER + PERIOD", exec("qs ipc call menu toggle symbols"),   { desc = "S
 hl.bind("SUPER + P",      exec("qs ipc call menu toggle wallpaper"), { desc = "Wallpaper picker" })
 hl.bind("SUPER + SHIFT + P", exec("qs ipc call menu toggle display"), { desc = "Display arrangement" })
 hl.bind("SUPER + D",      exec("qs ipc call widgets toggle"),        { desc = "Toggle desktop widgets" })
-hl.bind("SUPER + SHIFT + C", exec("qs ipc call cat tester"),         { desc = "Cat tester (the terminal cats' moods and reactions)" })
 
 -- Kitty Cam's soundboard (~/.config/kitty-cam): pads 1–9 into the call, 0 stops them.
 -- Only where Kitty Cam is linked (not on the NixOS laptop); bound anyway if Lua can't check.
