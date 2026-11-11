@@ -46,6 +46,11 @@ hl.bind("SUPER + T",       hl.dsp.window.tag({ tag = "full_opacity" }),         
 -- Navigate left / right
 hl.bind("SUPER + mouse_up",   function() linked.step(1) end,  { mouse = true, desc = "Next workspace" })
 hl.bind("SUPER + mouse_down", function() linked.step(-1) end, { mouse = true, desc = "Previous workspace" })
+-- Three-finger swipe on the touchpad: fingers left = next, right = previous (content follows the
+-- fingers). Steps once per swipe through linked.step, unlike the built-in "workspace" swipe, which
+-- would walk Hyprland's own workspace order past 9 and out of the monitor's slot.
+hl.gesture({ fingers = 3, direction = "left",  action = function() linked.step(1) end })
+hl.gesture({ fingers = 3, direction = "right", action = function() linked.step(-1) end })
 
 -- Navigate to specific workspace
 for i = 1, 9 do
