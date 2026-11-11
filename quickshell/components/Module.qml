@@ -17,7 +17,7 @@ Item {
 
     signal clicked
     signal rightClicked
-    // One emission per wheel notch (120 units); dx/dy are -1, 0 or 1, positive = up/right.
+    // One emission per wheel notch (120 units); dx/dy are -1, 0 or 1. Reversed: positive = down/left.
     signal scrolled(int dx, int dy)
 
     implicitWidth: label.implicitWidth
@@ -41,12 +41,12 @@ Item {
             while (Math.abs(root.accY) >= 120) {
                 const s = Math.sign(root.accY);
                 root.accY -= 120 * s;
-                root.scrolled(0, s);
+                root.scrolled(0, -s);
             }
             while (Math.abs(root.accX) >= 120) {
                 const s = Math.sign(root.accX);
                 root.accX -= 120 * s;
-                root.scrolled(-s, 0);
+                root.scrolled(s, 0);
             }
         }
     }
