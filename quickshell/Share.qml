@@ -63,7 +63,10 @@ Singleton {
     Process {
         id: slurp
 
-        command: ["slurp", "-f", "%o %x %y %w %h"]
+        // slurp reads boxes to choose from on stdin when it isn't a tty, and Process leaves a pipe open: without
+        // </dev/null it never maps. hyprpicker -r -z freezes the screen like grimblast --freeze in the screenshot tool;
+        // slurp starts once that layer is mapped, otherwise hyprpicker is on top and takes the click.
+        command: ["sh", "-c", 'hyprpicker -r -z & pid=$!; for i in $(seq 50); do hyprctl layers | grep -q hyprpicker && break; sleep 0.05; done; slurp -f "%o %x %y %w %h" </dev/null; kill $pid 2>/dev/null']
         stdout: StdioCollector {
             onStreamFinished: {
                 const m = text.trim().match(/^(\S+) (-?\d+) (-?\d+) (\d+) (\d+)$/);
