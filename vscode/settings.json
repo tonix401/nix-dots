@@ -1,0 +1,12 @@
+{
+    "files.autoSave": "afterDelay",
+    "workbench.editorAssociations": {
+        "{git,gitlens,chat-editing-snapshot-text-model,copilot,git-graph,git-graph-3}:/**/*.qrc": "default",
+        "*.qrc": "qt-core.qrcEditor"
+    },
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font'",
+    "debug.console.fontFamily": "'JetBrainsMono Nerd Font'",
+    "scm.inputFontFamily": "'JetBrainsMono Nerd Font'",
+    "chat.editor.fontFamily": "'JetBrainsMono Nerd Font'"
+}

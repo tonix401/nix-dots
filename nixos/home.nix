@@ -83,6 +83,8 @@ in
   # Claude Code and Hermes are `nix profile` apps, so their config is not managed here: it lives in
   # the knowledge vault, linked by ~/knowledge/scripts/link-agent-config.sh.
   home.file = {
+    # VSCode (a profile app) rewrites its settings, so the link stays writable
+    ".config/Code/User/settings.json" = link "vscode/settings.json";
     # zsh reads the rest of its config from ~/.config/zsh
     ".zshenv".text = ''
       export ZDOTDIR="$HOME/.config/zsh"
