@@ -81,7 +81,7 @@ Row {
                             else
                                 icon.modelData.activate();
                         }
-                        onWheel: event => icon.modelData.scroll(event.angleDelta.y, false)
+                        onWheel: event => icon.modelData.scroll(-event.angleDelta.y, false)
                     }
 
                     QsMenuAnchor {
