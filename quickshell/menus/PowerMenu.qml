@@ -5,33 +5,26 @@ import Quickshell.Widgets
 import qs
 import qs.components
 
-// A small picture of the desktop: the wallpaper at the screen's aspect ratio with the widgets'
-// dark band, and the options from the picture's left edge to the week calendar's column's right
-// edge (shell.qml passes where that is), top to bottom, with the same inset on every side.
+// A 2x1 card: the middle square of the wallpaper on the left, the options on the right, with the
+// same inset on every side of the list.
 Menu {
     id: menu
 
-    property rect calendarArea: Qt.rect(24, 51, 1320, 912) // on the screen; only its right edge is used
-    property int fade: 160 // the band's fade right of the widgets, on the screen
-
-    readonly property real screenWidth: screen?.width ?? 3440
-    readonly property real screenHeight: screen?.height ?? 1440
     readonly property int inset: 6 // around the list
     // Whether logind can hibernate here: it needs a swap big enough and a resume device, which only
     // the desktop has (nixos/hosts/box); elsewhere the option is left out.
     property bool canHibernate: false
-    // Screen pixels to picture pixels, chosen so the options fill the picture's height; the
-    // picture sits inside the box's 2px border.
-    readonly property real scale: (items.length * rowHeight + (items.length - 1) * listSpacing + 2 * inset) / screenHeight
+    // The picture's side, inside the box's 2px border: the options fill its height.
+    readonly property int side: items.length * rowHeight + (items.length - 1) * listSpacing + 2 * inset
 
-    boxWidth: Math.round(screenWidth * scale) + 4
-    boxHeight: Math.round(screenHeight * scale) + 4
+    boxWidth: 2 * side + 4
+    boxHeight: side + 4
     fontPt: 11
     rowPadV: 8
     rowPadH: 12
     showInput: false
     matching: "fuzzy"
-    listArea: Qt.rect(2 + inset, 2 + inset, Math.round((calendarArea.x + calendarArea.width) * scale) - 2 * inset, boxHeight - 4 - 2 * inset)
+    listArea: Qt.rect(2 + side + inset, 2 + inset, side - 2 * inset, side - 2 * inset)
     items: [
         {
             text: Theme.g(0xf0425) + "   Shutdown",
@@ -69,22 +62,23 @@ Menu {
         color: "transparent"
 
         Image {
-            anchors.fill: parent
+            width: menu.side
+            height: menu.side
             source: "file://" + Quickshell.env("HOME") + "/.cache/box-dots/current/wallpaper.png"
-            fillMode: Image.PreserveAspectCrop
+            fillMode: Image.PreserveAspectCrop // centred, so the middle square
             cache: false
             smooth: true
             mipmap: true
         }
-        // The band behind the desktop widgets: from the screen's left edge to the column's right
-        // edge, then fading out.
-        Item {
-            width: (menu.calendarArea.x + menu.calendarArea.width + menu.fade) * menu.scale
-            height: parent.height
 
-            Backdrop {
-                fade: menu.fade * menu.scale
-            }
+        // The divider: stops short of the border at both ends, with rounded ends.
+        Rectangle {
+            x: menu.side - width / 2
+            y: 5
+            width: 2
+            height: menu.side - 2 * y
+            radius: width / 2
+            color: Theme.primary
         }
     }
 

@@ -329,13 +329,7 @@ ShellRoot {
     // Each menu is created when opened and destroyed when closed, so it reloads its data every time like rofi.
     LazyLoader {
         active: Menus.active === "power"
-        PowerMenu {
-            // Its options go where the calendar is on the desktop of its screen.
-            readonly property var calendar: (desktops.instances.find(d => d.modelData.name === Hyprland.focusedMonitor?.name) ?? desktops.instances[0])?.calendar ?? null
-
-            calendarArea: calendar ? Qt.rect(root.edge, calendar.room.top, calendar.panelWidth, calendar.panelHeight) : Qt.rect(root.edge, root.panelTop, 1320, 912)
-            fade: root.fade
-        }
+        PowerMenu {}
     }
 
     LazyLoader {
