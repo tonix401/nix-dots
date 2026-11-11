@@ -11,7 +11,7 @@ import qs.components
 // (directly or through `qs ipc` like the fish hook, on every cat or only the focused window's), pinning
 // each expression, the motions and the squish, marking the focused window busy (as a running command
 // would), and faking the context the base mood comes from.
-// Opened by SUPER + SHIFT + C (hypr/keybinds.lua) or `qs ipc call cat tester`; closing it lifts the pin and the fakes again.
+// Opened by `qs ipc call cat tester`; closing it lifts the pin and the fakes again.
 PanelWindow {
     id: root
 

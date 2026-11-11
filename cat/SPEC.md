@@ -247,7 +247,7 @@ several share one, the focused one).
 
 `qs ipc call cat react <event>` (every cat), `qs ipc call cat reactPid <event> <pid>` (the window of
 that process), `busyPid <pid> <id>` / `remotePid <pid> <id>` / `finishedPid <pid> <id> <event|none>` (the squish, or the shades, around a command), `qs ipc call cat mood <expression>` (pins it in place of the base mood; reactions still
-play over it), `qs ipc call cat unpin`, `qs ipc call cat tester` or **SUPER + SHIFT + C** (the CatTester panel; its "only …"
+play over it), `qs ipc call cat unpin`, `qs ipc call cat tester` (the CatTester panel; its "only …"
 toggle aims reactions at the focused window), `qs ipc call cat kitty` (hide/show the cats), `qs ipc call cat sing` / `singOffset <ms>` (singing along).
 
 ## Kitty Cam
