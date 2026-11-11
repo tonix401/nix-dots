@@ -2,7 +2,10 @@
 ---- LOOK AND FEEL ----
 -----------------------
 
-Colors = require("colors")
+-- matugen writes the live colors outside ~/.config/hypr, because Hyprland reloads itself whenever a file
+-- there changes (which briefly resets the monitors to scale 1); colors.lua is the default before the first run
+local generated = loadfile(os.getenv("HOME") .. "/.cache/box-dots/colors.lua")
+Colors = generated and generated() or require("colors")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({

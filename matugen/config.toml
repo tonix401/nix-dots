@@ -8,8 +8,11 @@ command = "" # not used
 
 [templates.colors-hypr-lua]
 input_path = "~/.config/matugen/templates/colors-hypr.lua"
-output_path = "~/.config/hypr/colors.lua"
-post_hook = "{ sleep 2 && hyprctl reload; } &>/dev/null &"
+output_path = "~/.cache/box-dots/colors.lua"
+# Written outside ~/.config/hypr and applied live with Lua: Hyprland reloads itself when a file there changes,
+# and a reload resets the monitor rules to scale 1 until Displays.qml puts the saved profile back, which
+# re-laid out every Quickshell window (the glitches on a fractional scale)
+post_hook = "hyprctl eval 'local C = dofile(os.getenv(\"HOME\") .. \"/.cache/box-dots/colors.lua\"); hl.config({ general = { col = { active_border = C.primary, inactive_border = C.on_primary } }, misc = { background_color = C.background } })' &>/dev/null &"
 
 [templates.starship-toml]
 input_path = "~/.config/matugen/templates/starship.toml"
