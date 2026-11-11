@@ -273,6 +273,7 @@ in
 
     # menus, clipboard, screenshots
     grimblast
+    slurp # region picker of the screen-share menu (quickshell/Share.qml)
     cliphist
     wl-clipboard
     imagemagick
