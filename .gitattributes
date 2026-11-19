@@ -1,0 +1,11 @@
+# matugen output: the committed files are the defaults for new installs. The filter (defined in
+# nixos/home.nix) makes git ignore local changes to them.
+btop/themes/matugen.theme filter=matugen
+fastfetch/config.jsonc filter=matugen
+fastfetch/nix.gif filter=matugen
+hypr/colors-hyprlock.conf filter=matugen
+kitty/colors.conf filter=matugen
+quickshell/colors.json filter=matugen
+starship.toml filter=matugen
+zsh/colors.zsh filter=matugen
+zsh/images/penguin.png filter=matugen

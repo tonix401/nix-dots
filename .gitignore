@@ -29,6 +29,7 @@ __pycache__/
 !README.md
 !resources
 !.gitignore
+!.gitattributes
 
 *.save
 *.bak.*

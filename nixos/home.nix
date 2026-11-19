@@ -144,8 +144,12 @@ in
     enable = true;
     settings.user = {
       name = "tom";
-      email = "77272659+tonix401@users.noreply.github.com";
+      email = "77272659+tonix401@users.noreply.github.com"; # GitHub noreply, keeps the real address out of commits
     };
+    # nix-dots/.gitattributes marks the matugen output with this filter: git compares the committed
+    # default instead of the live colors, so wallpaper changes never show up as changes.
+    # To update a default: git -c filter.matugen.clean=cat add <file>
+    settings.filter.matugen.clean = "git show HEAD:%f";
   };
 
   # GitHub CLI; also git's credential helper for github.com, so git push uses the `gh auth login` token
