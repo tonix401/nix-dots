@@ -154,7 +154,7 @@ in
   users.users.tom = {
     isNormalUser = true;
     description = "tom";
-    extraGroups = [ "wheel" "i2c" ];
+    extraGroups = [ "wheel" "i2c" "vboxusers" ];
     # Lets the sddm user reach the wallpaper in ~/.cache (traverse only, no listing)
     homeMode = "711";
     shell = pkgs.zsh;
@@ -259,6 +259,10 @@ in
     defaultNetwork.settings.dns_enabled = true;
   };
   systemd.user.sockets.podman.wantedBy = [ "sockets.target" ];
+
+  # VirtualBox host (kernel modules + setuid wrappers) for the pfSense lab in ~/git/pfsense-lab.
+  # A `nix profile` VirtualBox can't load vboxdrv, so it has to come from here.
+  virtualisation.virtualbox.host.enable = true;
 
   environment.systemPackages = with pkgs; [
     sddmTheme
